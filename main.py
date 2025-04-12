@@ -17,7 +17,7 @@ def load_rules(filename="default_rules.json"):
         print(f"Warning: Could not load {config_path}, using default rules")
         return {}
 
-def run_duel_simulation(max_ticks=30, visualize=True, tick_duration_ms=600):
+def run_duel_simulation(max_ticks=150, visualize=True, tick_duration_ms=300):
     """Run a complete duel simulation"""
     # Load rules
     rule_config = load_rules()
@@ -26,9 +26,13 @@ def run_duel_simulation(max_ticks=30, visualize=True, tick_duration_ms=600):
     # Create tick manager
     tick_manager = TickManager(tick_duration_ms=tick_duration_ms)
     
-    # Create players
-    player1 = Player(name="Fighter1", hp=99, attack=75, strength=80, defense=70)
-    player2 = Player(name="Fighter2", hp=99, attack=70, strength=75, defense=80)
+    # Create players with identical stats for fair combat
+    player1 = Player(name="Fighter1", hp=99, attack=80, strength=75, defense=65)
+    player2 = Player(name="Fighter2", hp=99, attack=80, strength=75, defense=65)
+    
+    # Set faster weapon speeds for more frequent attacks
+    player1.weapon_speed = 2  # Attack every 2 ticks
+    player2.weapon_speed = 2
     
     # Set initial positions from config or defaults
     starting_positions = rule_config.get("starting_positions", [[0, 0], [4, 4]])
@@ -39,9 +43,9 @@ def run_duel_simulation(max_ticks=30, visualize=True, tick_duration_ms=600):
     tick_manager.register_player(player1)
     tick_manager.register_player(player2)
     
-    # Create AI agents
-    agent1 = BasicAgent(player1, aggression=0.8)
-    agent2 = BasicAgent(player2, aggression=0.6)
+    # Create AI agents with different aggression levels for variety
+    agent1 = BasicAgent(player1, aggression=0.9)  # Very aggressive
+    agent2 = BasicAgent(player2, aggression=0.8)  # Slightly less aggressive
     
     # Create visualizer
     arena_size = rule_config.get("arena_size", {"width": 5, "height": 5})
@@ -111,7 +115,8 @@ def run_duel_simulation(max_ticks=30, visualize=True, tick_duration_ms=600):
 
 def main():
     # Run simulation with visualization
-    run_duel_simulation(max_ticks=30, visualize=True, tick_duration_ms=300)  # Faster for demo
+    # 45 seconds = 45,000ms / 300ms per tick = 150 ticks
+    run_duel_simulation(max_ticks=150, visualize=True, tick_duration_ms=300)  # 300ms per tick for ~45 second game
 
 if __name__ == "__main__":
     main() 

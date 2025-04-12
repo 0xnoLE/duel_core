@@ -5,7 +5,7 @@ class RuleSet:
             "allow_melee": True,
             "allow_ranged": True,
             "allow_magic": True,
-            "no_food": False,
+            "no_food": True,  # Disable healing
             "no_movement": False,
             "lock_slots": {}
         }
@@ -66,6 +66,8 @@ class RuleSet:
         
         # Check if player can eat
         if not self.rules["no_food"] and player.hp < player.max_hp:
-            legal_actions.append({"type": "eat", "heal_amount": 20})
+            # More significant healing to make it worthwhile
+            heal_amount = min(25, player.max_hp - player.hp)  # Heal up to 25 HP but don't overheal
+            legal_actions.append({"type": "eat", "heal_amount": heal_amount})
             
         return legal_actions 

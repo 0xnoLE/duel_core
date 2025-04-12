@@ -57,6 +57,26 @@ class TickManager:
         for player in self.players:
             player.update_cooldowns()
             
+        # Log health milestones to create tension
+        for player in self.players:
+            opponent = [p for p in self.players if p != player][0]
+            
+            # Log when players reach certain health thresholds
+            if player.hp <= 50 and player.hp > 40 and not any(e['message'].startswith(f"{player.name} is at half") for e in self.events):
+                self.log_event(f"{player.name} is at half health!")
+                
+            if player.hp <= 25 and player.hp > 0:
+                if player.hp <= 10:
+                    if not any(e['message'].startswith(f"{player.name} is critically") for e in self.events[-10:]):
+                        self.log_event(f"{player.name} is critically wounded ({player.hp} HP)!")
+                elif not any(e['message'].startswith(f"{player.name} is badly") for e in self.events[-10:]):
+                    self.log_event(f"{player.name} is badly wounded!")
+                    
+            # Log when a player has a significant health advantage
+            health_diff = player.hp - opponent.hp
+            if health_diff >= 30 and not any(e['message'].startswith(f"{player.name} has a significant") for e in self.events[-15:]):
+                self.log_event(f"{player.name} has a significant health advantage!")
+        
         # Check win conditions
         for player in self.players:
             if player.hp <= 0:

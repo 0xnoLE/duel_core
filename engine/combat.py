@@ -23,16 +23,19 @@ def resolve_attack(attacker, defender):
         return 0
         
     if attacker.cooldown == 0:
-        # Implement proper RNG function
-        accuracy_roll = random.random() < (attacker.attack / 100)
+        # Very high hit chance (90%) for more consistent combat
+        accuracy_roll = random.random() < 0.9
         
-        # Calculate damage based on strength
-        base_damage = attacker.strength // 10
-        max_hit = base_damage + random.randint(0, base_damage // 2)
+        # More consistent damage calculation with controlled RNG
+        base_damage = attacker.strength // 7  # Higher base damage
         
-        # Apply defense reduction
-        damage_reduction = defender.defense / 200  # 50% reduction at 100 defense
-        damage = int(max_hit * (1 - damage_reduction)) if accuracy_roll else 0
+        # Add randomness but ensure minimum damage
+        variance = random.randint(0, 5)  # 0-5 random variance
+        max_hit = base_damage + variance
+        
+        # Reduced defense impact for more consistent damage
+        defense_factor = defender.defense / 400  # Even less reduction from defense
+        damage = max(3, int(max_hit * (1 - defense_factor))) if accuracy_roll else 0
         
         defender.hp -= damage
         attacker.cooldown = attacker.weapon_speed

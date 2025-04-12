@@ -15,21 +15,17 @@ class BasicAgent:
         x2, y2 = opponent.position
         distance = abs(x1 - x2) + abs(y1 - y2)
         
-        # If low health and can eat, sometimes choose to eat
-        if self.player.hp < self.player.max_hp * 0.5:
-            eat_actions = [a for a in legal_actions if a["type"] == "eat"]
-            if eat_actions and random.random() > self.aggression:
-                return eat_actions[0]
+        # No healing option since food is disabled
         
-        # If adjacent to opponent and can attack, prioritize attacking
+        # If adjacent to opponent and can attack, almost always attack
         if distance <= 1 and self.player.cooldown == 0:
             attack_actions = [a for a in legal_actions if a["type"].startswith("attack")]
-            if attack_actions and random.random() < self.aggression:
+            if attack_actions and random.random() < 0.95:  # 95% chance to attack when possible
                 action = random.choice(attack_actions)
                 action["target"] = opponent
                 return action
         
-        # If not adjacent to opponent, try to move closer
+        # If not adjacent to opponent, always try to move closer
         if distance > 1:
             move_actions = [a for a in legal_actions if a["type"] == "move"]
             if move_actions:
@@ -41,6 +37,7 @@ class BasicAgent:
                     if new_distance < distance:
                         best_moves.append(move)
                 
+                # Almost always choose a move that gets closer
                 if best_moves:
                     return random.choice(best_moves)
         
