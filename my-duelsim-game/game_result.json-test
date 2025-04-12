@@ -1,0 +1,133 @@
+{
+  "winner": "0xEC",
+  "events": [
+    {
+      "tick": 0,
+      "type": "narrative",
+      "message": "The duel between 0xEC and noLE begins!"
+    },
+    {
+      "tick": 1,
+      "type": "movement",
+      "actor": "0xEC",
+      "from_position": [
+        0,
+        0
+      ],
+      "to_position": [
+        1,
+        1
+      ],
+      "message": "0xEC moves closer to noLE"
+    },
+    {
+      "tick": 3,
+      "type": "attack",
+      "attack_type": "melee",
+      "attacker": "0xEC",
+      "defender": "noLE",
+      "damage": 15,
+      "defender_hp_before": 99,
+      "defender_hp_after": 84,
+      "message": "0xEC strikes noLE for 15 damage"
+    },
+    {
+      "tick": 5,
+      "type": "attack",
+      "attack_type": "melee",
+      "attacker": "noLE",
+      "defender": "0xEC",
+      "damage": 10,
+      "defender_hp_before": 99,
+      "defender_hp_after": 89,
+      "message": "noLE counters with a quick strike for 10 damage"
+    },
+    {
+      "tick": 7,
+      "type": "special",
+      "actor": "0xEC",
+      "move_name": "Power Attack",
+      "message": "0xEC prepares a powerful attack"
+    },
+    {
+      "tick": 8,
+      "type": "attack",
+      "attack_type": "melee",
+      "attacker": "0xEC",
+      "defender": "noLE",
+      "damage": 30,
+      "is_critical": true,
+      "defender_hp_before": 84,
+      "defender_hp_after": 54,
+      "message": "0xEC lands a CRITICAL HIT on noLE for 30 damage!"
+    },
+    {
+      "tick": 10,
+      "type": "attack",
+      "attack_type": "melee",
+      "attacker": "0xEC",
+      "defender": "noLE",
+      "damage": 54,
+      "defender_hp_before": 54,
+      "defender_hp_after": 0,
+      "message": "0xEC delivers the final blow to noLE"
+    },
+    {
+      "tick": 10,
+      "type": "victory",
+      "winner": "0xEC",
+      "message": "noLE is defeated! 0xEC is victorious!"
+    }
+  ],
+  "final_state": {
+    "player1": {
+      "name": "0xEC",
+      "hp": 89,
+      "max_hp": 99,
+      "attack": 99,
+      "strength": 99,
+      "defense": 99,
+      "position": [
+        2,
+        2
+      ]
+    },
+    "player2": {
+      "name": "noLE",
+      "hp": 0,
+      "max_hp": 99,
+      "attack": 99,
+      "strength": 99,
+      "defense": 99,
+      "position": [
+        4,
+        4
+      ]
+    },
+    "ticks": 10
+  },
+  "statistics": {
+    "duration": {
+      "ticks": 10,
+      "seconds": 2.5
+    },
+    "damage": {
+      "0xEC": {
+        "dealt": 99,
+        "received": 10,
+        "attacks": 3,
+        "critical_hits": 1
+      },
+      "noLE": {
+        "dealt": 10,
+        "received": 99,
+        "attacks": 1,
+        "critical_hits": 0
+      }
+    },
+    "movement": {
+      "0xEC": 2,
+      "noLE": 1
+    }
+  }
+}

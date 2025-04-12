@@ -1,30 +1,163 @@
 {
-  "winner": "0xEC",
+  "winner": "noLE",
   "events": [
     {
-      "tick": 1,
-      "message": "0xEC attacks noLE"
+      "tick": 0,
+      "type": "narrative",
+      "message": "The duel between 0xEC and noLE begins!"
     },
     {
-      "tick": 10,
-      "message": "noLE is defeated!"
+      "tick": 1,
+      "type": "movement",
+      "actor": "noLE",
+      "from_position": [
+        4,
+        4
+      ],
+      "to_position": [
+        4,
+        3
+      ],
+      "message": "noLE moves closer to 0xEC"
+    },
+    {
+      "tick": 2,
+      "type": "movement",
+      "actor": "0xEC",
+      "from_position": [
+        0,
+        0
+      ],
+      "to_position": [
+        1,
+        0
+      ],
+      "message": "0xEC moves toward noLE"
+    },
+    {
+      "tick": 3,
+      "type": "movement",
+      "actor": "noLE",
+      "from_position": [
+        4,
+        3
+      ],
+      "to_position": [
+        4,
+        2
+      ],
+      "message": "noLE moves toward 0xEC"
+    },
+    {
+      "tick": 4,
+      "type": "movement",
+      "actor": "0xEC",
+      "from_position": [
+        1,
+        0
+      ],
+      "to_position": [
+        2,
+        0
+      ],
+      "message": "0xEC moves toward noLE"
+    },
+    {
+      "tick": 5,
+      "type": "movement",
+      "actor": "noLE",
+      "from_position": [
+        4,
+        2
+      ],
+      "to_position": [
+        4,
+        1
+      ],
+      "message": "noLE moves toward 0xEC"
+    },
+    {
+      "tick": 6,
+      "type": "movement",
+      "actor": "0xEC",
+      "from_position": [
+        2,
+        0
+      ],
+      "to_position": [
+        3,
+        0
+      ],
+      "message": "0xEC moves toward noLE"
+    },
+    {
+      "tick": 7,
+      "type": "attack",
+      "attack_type": "melee",
+      "attacker": "noLE",
+      "defender": "0xEC",
+      "damage": 154,
+      "is_critical": true,
+      "defender_hp_before": 99,
+      "defender_hp_after": -55,
+      "message": "noLE lands a CRITICAL HIT on 0xEC for 154 damage!"
+    },
+    {
+      "tick": 8,
+      "type": "victory",
+      "winner": "noLE",
+      "message": "0xEC is defeated! noLE is victorious!"
     }
   ],
   "final_state": {
     "player1": {
       "name": "0xEC",
-      "hp": 99,
+      "hp": 0,
+      "max_hp": 99,
       "attack": 99,
       "strength": 99,
-      "defense": 99
+      "defense": 99,
+      "position": [
+        3,
+        0
+      ]
     },
     "player2": {
       "name": "noLE",
       "hp": 99,
+      "max_hp": 99,
       "attack": 99,
       "strength": 99,
-      "defense": 99
+      "defense": 99,
+      "position": [
+        4,
+        1
+      ]
     },
-    "ticks": 10
+    "ticks": 8
+  },
+  "statistics": {
+    "duration": {
+      "ticks": 8,
+      "seconds": 2.0
+    },
+    "damage": {
+      "0xEC": {
+        "dealt": 0,
+        "received": 154,
+        "attacks": 0,
+        "critical_hits": 0
+      },
+      "noLE": {
+        "dealt": 154,
+        "received": 0,
+        "attacks": 1,
+        "critical_hits": 1
+      }
+    },
+    "movement": {
+      "0xEC": 3,
+      "noLE": 3
+    }
   }
 }
