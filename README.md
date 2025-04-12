@@ -6,7 +6,7 @@ A turn-based duel simulation engine written in Python.
 
 ```bash
 # Install from GitHub
-pip install git+https://github.com/yourusername/duelsim.git
+pip install git+https://github.com/0xnoLE/duel_core.git#subdirectory=duel-sim
 
 # Or install in development mode
 git clone https://github.com/yourusername/duelsim.git

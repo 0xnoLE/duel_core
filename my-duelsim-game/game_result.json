@@ -1,0 +1,30 @@
+{
+  "winner": "0xEC",
+  "events": [
+    {
+      "tick": 1,
+      "message": "0xEC attacks noLE"
+    },
+    {
+      "tick": 10,
+      "message": "noLE is defeated!"
+    }
+  ],
+  "final_state": {
+    "player1": {
+      "name": "0xEC",
+      "hp": 99,
+      "attack": 99,
+      "strength": 99,
+      "defense": 99
+    },
+    "player2": {
+      "name": "noLE",
+      "hp": 99,
+      "attack": 99,
+      "strength": 99,
+      "defense": 99
+    },
+    "ticks": 10
+  }
+}
