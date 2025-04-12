@@ -1,0 +1,16 @@
+{
+    "allow_melee": true,
+    "allow_ranged": true,
+    "allow_magic": true,
+    "no_food": false,
+    "no_movement": false,
+    "lock_slots": {},
+    "arena_size": {
+        "width": 5,
+        "height": 5
+    },
+    "starting_positions": [
+        [0, 0],
+        [4, 4]
+    ]
+} 

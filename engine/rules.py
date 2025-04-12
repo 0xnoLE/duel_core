@@ -46,11 +46,23 @@ class RuleSet:
         if not self.rules["no_movement"]:
             # Simplified movement options (cardinal directions)
             x, y = player.position
+            arena_size = self.rules.get("arena_size", {"width": 5, "height": 5})
+            width, height = arena_size["width"], arena_size["height"]
+            
+            # Get positions of other players to avoid collisions
+            other_positions = []
+            for other_player in game_state.players:
+                if other_player != player:
+                    other_positions.append(other_player.position)
+            
             for dx, dy in [(0, 1), (1, 0), (0, -1), (-1, 0)]:
-                legal_actions.append({
-                    "type": "move", 
-                    "destination": (x + dx, y + dy)
-                })
+                new_x, new_y = x + dx, y + dy
+                if (0 <= new_x < width and 0 <= new_y < height and 
+                    (new_x, new_y) not in other_positions):
+                    legal_actions.append({
+                        "type": "move", 
+                        "destination": (new_x, new_y)
+                    })
         
         # Check if player can eat
         if not self.rules["no_food"] and player.hp < player.max_hp:

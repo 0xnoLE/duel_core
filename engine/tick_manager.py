@@ -4,7 +4,7 @@ class TickManager:
     def __init__(self, tick_duration_ms=600):
         self.TICK_DURATION_MS = tick_duration_ms
         self.current_tick = 0
-        self.duel_active = False
+        self.duel_active = True
         self.players = []
         self.events = []
         
@@ -12,30 +12,6 @@ class TickManager:
         """Add a player to the duel"""
         self.players.append(player)
         
-    def start_duel(self):
-        """Begin the duel loop"""
-        self.duel_active = True
-        self.current_tick = 0
-        self.run()
-        
-    def end_duel(self):
-        """End the duel"""
-        self.duel_active = False
-        
-    def run(self):
-        """Main tick loop"""
-        while self.duel_active:
-            start_time = time.time()
-            
-            # Process this tick
-            self.current_tick += 1
-            self.process_tick()
-            
-            # Sleep for remainder of tick duration
-            elapsed = (time.time() - start_time) * 1000
-            sleep_time = max(0, (self.TICK_DURATION_MS - elapsed) / 1000)
-            time.sleep(sleep_time)
-            
     def process_tick(self):
         """Process a single game tick"""
         # Process player actions
@@ -49,6 +25,7 @@ class TickManager:
         """Process actions for a player on this tick"""
         if player.is_action_ready(self.current_tick):
             action = player.next_action
+            # Add game state reference to the action execution
             self.execute_action(player, action)
             player.next_action = None
             
@@ -56,10 +33,11 @@ class TickManager:
         """Execute a specific action"""
         action_type = action.get("type")
         
-        if action_type == "attack":
+        if action_type == "attack" or action_type.startswith("attack_"):
             from engine.combat import resolve_attack
             target = action.get("target")
-            resolve_attack(player, target)
+            damage = resolve_attack(player, target)
+            self.log_event(f"{player.name} attacks {target.name} for {damage} damage")
             
         elif action_type == "move":
             destination = action.get("destination")
@@ -68,8 +46,10 @@ class TickManager:
             
         elif action_type == "eat":
             heal_amount = action.get("heal_amount", 0)
+            old_hp = player.hp
             player.hp = min(player.max_hp, player.hp + heal_amount)
-            self.log_event(f"{player.name} healed for {heal_amount}")
+            actual_heal = player.hp - old_hp
+            self.log_event(f"{player.name} healed for {actual_heal}")
     
     def update_game_state(self):
         """Update game state after actions are processed"""
@@ -82,7 +62,7 @@ class TickManager:
             if player.hp <= 0:
                 opponent = [p for p in self.players if p != player][0]
                 self.log_event(f"{opponent.name} has defeated {player.name}!")
-                self.end_duel()
+                self.duel_active = False
                 
     def log_event(self, message):
         """Log a game event"""
