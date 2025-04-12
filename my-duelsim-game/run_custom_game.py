@@ -15,7 +15,7 @@ def load_custom_config(filename="custom_config.json"):
         print(f"Warning: Could not load {filename}, using default config")
         return {}
 
-def run_custom_game(num_simulations=1, generate_report=True):
+def run_custom_game(num_simulations=1, generate_report=True, enhanced_visuals=True):
     """Run one or more games with custom configuration"""
     # Load custom configuration
     config = load_custom_config()
@@ -51,7 +51,8 @@ def run_custom_game(num_simulations=1, generate_report=True):
             tick_duration_ms=250,
             player1_config=player1_config,
             player2_config=player2_config,
-            rules_config=config
+            rules_config=config,
+            enhanced_visuals=enhanced_visuals  # Use enhanced visuals
         )
         
         # Save the result
@@ -91,8 +92,11 @@ if __name__ == "__main__":
                         help="Number of simulations to run (default: 1)")
     parser.add_argument("--no-report", action="store_true",
                         help="Skip generating reports")
+    parser.add_argument("--no-enhanced-visuals", action="store_true",
+                        help="Use basic visualization instead of enhanced")
     
     args = parser.parse_args()
     
     run_custom_game(num_simulations=args.num_simulations, 
-                   generate_report=not args.no_report) 
+                   generate_report=not args.no_report,
+                   enhanced_visuals=not args.no_enhanced_visuals) 

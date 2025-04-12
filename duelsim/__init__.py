@@ -8,7 +8,8 @@ __version__ = "0.1.0"
 
 # Only export the main function
 def run_duel_simulation(max_ticks=150, visualize=True, tick_duration_ms=300,
-                        player1_config=None, player2_config=None, rules_config=None):
+                        player1_config=None, player2_config=None, rules_config=None,
+                        enhanced_visuals=True):
     """
     Simulation function with randomized combat outcomes
     """
@@ -70,54 +71,55 @@ def run_duel_simulation(max_ticks=150, visualize=True, tick_duration_ms=300,
                 dx = p2["position"][0] - p1["position"][0]
                 dy = p2["position"][1] - p1["position"][1]
                 
-                # Normalize and move
-                if abs(dx) > 0 or abs(dy) > 0:
-                    if abs(dx) > abs(dy):
-                        p1["position"][0] += 1 if dx > 0 else -1
-                    else:
-                        p1["position"][1] += 1 if dy > 0 else -1
+                # Choose direction with some randomness
+                if abs(dx) > abs(dy) and random.random() < 0.7:
+                    # Move horizontally
+                    p1["position"][0] += 1 if dx > 0 else -1
+                else:
+                    # Move vertically
+                    p1["position"][1] += 1 if dy > 0 else -1
                 
+                # Ensure within bounds
+                p1["position"][0] = max(0, min(4, p1["position"][0]))
+                p1["position"][1] = max(0, min(4, p1["position"][1]))
+                
+                # Log movement
                 events.append({
                     "tick": current_tick,
                     "type": "movement",
                     "actor": p1["name"],
                     "from_position": old_pos,
                     "to_position": p1["position"].copy(),
-                    "message": f"{p1['name']} moves closer to {p2['name']}"
+                    "message": f"{p1['name']} moves toward {p2['name']}"
                 })
+                
                 p1_movements += 1
             else:
-                # Calculate distance between players
-                distance = math.sqrt((p1["position"][0] - p2["position"][0])**2 + 
-                                    (p1["position"][1] - p2["position"][1])**2)
-                
-                if distance <= 1.5:  # Close enough to attack
-                    # Attack calculation with randomness
-                    attack_roll = random.random()
-                    is_critical = attack_roll > 0.85  # 15% chance of critical hit
+                # Attack if close enough
+                distance = abs(p1["position"][0] - p2["position"][0]) + abs(p1["position"][1] - p2["position"][1])
+                if distance <= 1:  # Adjacent
+                    # Calculate hit chance based on attack vs defense
+                    hit_chance = 0.7 + (p1["attack"] - p2["defense"]) / 200
+                    hit_chance = max(0.3, min(0.95, hit_chance))  # Bound between 30% and 95%
                     
-                    # Base damage calculation
-                    accuracy = p1["attack"] / 100  # 0.0-1.0 scale
-                    hit_chance = 0.5 + (accuracy * 0.4)  # 50-90% hit chance
-                    
-                    if random.random() < hit_chance:  # Hit connects
-                        # Damage calculation
-                        base_damage = random.randint(5, 15)
-                        strength_bonus = p1["strength"] / 10
-                        defense_reduction = p2["defense"] / 200  # 0-0.5 reduction
+                    if random.random() < hit_chance:
+                        # Hit! Calculate damage
+                        base_damage = p1["strength"] / 10 + random.randint(5, 15)
                         
-                        damage = int(base_damage * (1 + strength_bonus) * (1 - defense_reduction))
+                        # Critical hit chance
+                        crit_chance = 0.1 + p1["attack"] / 1000
+                        is_critical = random.random() < crit_chance
                         
                         if is_critical:
-                            damage = int(damage * 2)
+                            base_damage *= 2
                             p1_crits += 1
                         
                         # Apply damage
+                        damage = int(base_damage)
+                        old_hp = p2["current_hp"]
                         p2["current_hp"] -= damage
-                        p1_damage_dealt += damage
-                        p1_attacks += 1
                         
-                        # Create event
+                        # Log attack
                         events.append({
                             "tick": current_tick,
                             "type": "attack",
@@ -126,47 +128,15 @@ def run_duel_simulation(max_ticks=150, visualize=True, tick_duration_ms=300,
                             "defender": p2["name"],
                             "damage": damage,
                             "is_critical": is_critical,
-                            "defender_hp_before": p2["current_hp"] + damage,
+                            "defender_hp_before": old_hp,
                             "defender_hp_after": p2["current_hp"],
                             "message": f"{p1['name']} {'lands a CRITICAL HIT on' if is_critical else 'strikes'} {p2['name']} for {damage} damage!"
                         })
-                    else:
-                        # Miss
-                        events.append({
-                            "tick": current_tick,
-                            "type": "attack",
-                            "attack_type": "melee",
-                            "attacker": p1["name"],
-                            "defender": p2["name"],
-                            "damage": 0,
-                            "message": f"{p1['name']} attacks but misses {p2['name']}"
-                        })
+                        
+                        p1_damage_dealt += damage
                         p1_attacks += 1
-                else:
-                    # Too far to attack, must move
-                    old_pos = p1["position"].copy()
-                    # Move toward opponent
-                    dx = p2["position"][0] - p1["position"][0]
-                    dy = p2["position"][1] - p1["position"][1]
-                    
-                    # Normalize and move
-                    if abs(dx) > 0 or abs(dy) > 0:
-                        if abs(dx) > abs(dy):
-                            p1["position"][0] += 1 if dx > 0 else -1
-                        else:
-                            p1["position"][1] += 1 if dy > 0 else -1
-                    
-                    events.append({
-                        "tick": current_tick,
-                        "type": "movement",
-                        "actor": p1["name"],
-                        "from_position": old_pos,
-                        "to_position": p1["position"].copy(),
-                        "message": f"{p1['name']} moves toward {p2['name']}"
-                    })
-                    p1_movements += 1
         
-        # Player 2's turn (roughly every other tick)
+        # Player 2's turn
         else:
             if action_roll < 0.3:  # 30% chance to move
                 # Movement
@@ -175,54 +145,55 @@ def run_duel_simulation(max_ticks=150, visualize=True, tick_duration_ms=300,
                 dx = p1["position"][0] - p2["position"][0]
                 dy = p1["position"][1] - p2["position"][1]
                 
-                # Normalize and move
-                if abs(dx) > 0 or abs(dy) > 0:
-                    if abs(dx) > abs(dy):
-                        p2["position"][0] += 1 if dx > 0 else -1
-                    else:
-                        p2["position"][1] += 1 if dy > 0 else -1
+                # Choose direction with some randomness
+                if abs(dx) > abs(dy) and random.random() < 0.7:
+                    # Move horizontally
+                    p2["position"][0] += 1 if dx > 0 else -1
+                else:
+                    # Move vertically
+                    p2["position"][1] += 1 if dy > 0 else -1
                 
+                # Ensure within bounds
+                p2["position"][0] = max(0, min(4, p2["position"][0]))
+                p2["position"][1] = max(0, min(4, p2["position"][1]))
+                
+                # Log movement
                 events.append({
                     "tick": current_tick,
                     "type": "movement",
                     "actor": p2["name"],
                     "from_position": old_pos,
                     "to_position": p2["position"].copy(),
-                    "message": f"{p2['name']} moves closer to {p1['name']}"
+                    "message": f"{p2['name']} moves toward {p1['name']}"
                 })
+                
                 p2_movements += 1
             else:
-                # Calculate distance between players
-                distance = math.sqrt((p1["position"][0] - p2["position"][0])**2 + 
-                                    (p1["position"][1] - p2["position"][1])**2)
-                
-                if distance <= 1.5:  # Close enough to attack
-                    # Attack calculation with randomness
-                    attack_roll = random.random()
-                    is_critical = attack_roll > 0.85  # 15% chance of critical hit
+                # Attack if close enough
+                distance = abs(p1["position"][0] - p2["position"][0]) + abs(p1["position"][1] - p2["position"][1])
+                if distance <= 1:  # Adjacent
+                    # Calculate hit chance based on attack vs defense
+                    hit_chance = 0.7 + (p2["attack"] - p1["defense"]) / 200
+                    hit_chance = max(0.3, min(0.95, hit_chance))  # Bound between 30% and 95%
                     
-                    # Base damage calculation
-                    accuracy = p2["attack"] / 100  # 0.0-1.0 scale
-                    hit_chance = 0.5 + (accuracy * 0.4)  # 50-90% hit chance
-                    
-                    if random.random() < hit_chance:  # Hit connects
-                        # Damage calculation
-                        base_damage = random.randint(5, 15)
-                        strength_bonus = p2["strength"] / 10
-                        defense_reduction = p1["defense"] / 200  # 0-0.5 reduction
+                    if random.random() < hit_chance:
+                        # Hit! Calculate damage
+                        base_damage = p2["strength"] / 10 + random.randint(5, 15)
                         
-                        damage = int(base_damage * (1 + strength_bonus) * (1 - defense_reduction))
+                        # Critical hit chance
+                        crit_chance = 0.1 + p2["attack"] / 1000
+                        is_critical = random.random() < crit_chance
                         
                         if is_critical:
-                            damage = int(damage * 2)
+                            base_damage *= 2
                             p2_crits += 1
                         
                         # Apply damage
+                        damage = int(base_damage)
+                        old_hp = p1["current_hp"]
                         p1["current_hp"] -= damage
-                        p2_damage_dealt += damage
-                        p2_attacks += 1
                         
-                        # Create event
+                        # Log attack
                         events.append({
                             "tick": current_tick,
                             "type": "attack",
@@ -231,45 +202,13 @@ def run_duel_simulation(max_ticks=150, visualize=True, tick_duration_ms=300,
                             "defender": p1["name"],
                             "damage": damage,
                             "is_critical": is_critical,
-                            "defender_hp_before": p1["current_hp"] + damage,
+                            "defender_hp_before": old_hp,
                             "defender_hp_after": p1["current_hp"],
                             "message": f"{p2['name']} {'lands a CRITICAL HIT on' if is_critical else 'strikes'} {p1['name']} for {damage} damage!"
                         })
-                    else:
-                        # Miss
-                        events.append({
-                            "tick": current_tick,
-                            "type": "attack",
-                            "attack_type": "melee",
-                            "attacker": p2["name"],
-                            "defender": p1["name"],
-                            "damage": 0,
-                            "message": f"{p2['name']} attacks but misses {p1['name']}"
-                        })
+                        
+                        p2_damage_dealt += damage
                         p2_attacks += 1
-                else:
-                    # Too far to attack, must move
-                    old_pos = p2["position"].copy()
-                    # Move toward opponent
-                    dx = p1["position"][0] - p2["position"][0]
-                    dy = p1["position"][1] - p2["position"][1]
-                    
-                    # Normalize and move
-                    if abs(dx) > 0 or abs(dy) > 0:
-                        if abs(dx) > abs(dy):
-                            p2["position"][0] += 1 if dx > 0 else -1
-                        else:
-                            p2["position"][1] += 1 if dy > 0 else -1
-                    
-                    events.append({
-                        "tick": current_tick,
-                        "type": "movement",
-                        "actor": p2["name"],
-                        "from_position": old_pos,
-                        "to_position": p2["position"].copy(),
-                        "message": f"{p2['name']} moves toward {p1['name']}"
-                    })
-                    p2_movements += 1
         
         # Occasionally add special moves or narrative events
         if current_tick > 0 and current_tick % 10 == 0:

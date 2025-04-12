@@ -12,6 +12,7 @@ duelsim/ai/__init__.py
 duelsim/engine/__init__.py
 duelsim/entities/__init__.py
 duelsim/utils/__init__.py
+duelsim/utils/enhanced_visualizer.py
 engine/__init__.py
 engine/combat.py
 engine/rules.py
