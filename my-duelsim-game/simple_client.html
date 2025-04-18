@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DuelSim Simple Client</title>
+    <style>
+        body { font-family: monospace; background: #111; color: #0f0; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; }
+        button { background: #000; color: #0f0; border: 1px solid #0f0; padding: 8px 15px; margin: 5px; cursor: pointer; }
+        #arena { display: grid; grid-template-columns: repeat(5, 50px); grid-template-rows: repeat(5, 50px); gap: 2px; margin: 20px 0; }
+        .cell { width: 50px; height: 50px; background: #222; border: 1px solid #333; display: flex; align-items: center; justify-content: center; }
+        .player1 { background: #005; color: #fff; }
+        .player2 { background: #500; color: #fff; }
+        #events { height: 200px; overflow-y: auto; border: 1px solid #333; padding: 10px; margin-top: 10px; }
+        .status { padding: 10px; border: 1px solid #333; margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DuelSim Simple Client</h1>
+        
+        <div id="status" class="status">Disconnected</div>
+        
+        <button id="connect-btn">Connect</button>
+        <button id="start-btn">Start Duel</button>
+        
+        <div id="arena"></div>
+        
+        <div id="player-info">
+            <div id="player1">Player 1: <span id="p1-name">-</span> | HP: <span id="p1-hp">-</span>/<span id="p1-maxhp">-</span></div>
+            <div id="player2">Player 2: <span id="p2-name">-</span> | HP: <span id="p2-hp">-</span>/<span id="p2-maxhp">-</span></div>
+        </div>
+        
+        <h3>Events</h3>
+        <div id="events"></div>
+    </div>
+    
+    <script>
+        // DOM elements
+        const statusEl = document.getElementById('status');
+        const connectBtn = document.getElementById('connect-btn');
+        const startBtn = document.getElementById('start-btn');
+        const arenaEl = document.getElementById('arena');
+        const eventsEl = document.getElementById('events');
+        const p1NameEl = document.getElementById('p1-name');
+        const p1HpEl = document.getElementById('p1-hp');
+        const p1MaxHpEl = document.getElementById('p1-maxhp');
+        const p2NameEl = document.getElementById('p2-name');
+        const p2HpEl = document.getElementById('p2-hp');
+        const p2MaxHpEl = document.getElementById('p2-maxhp');
+        
+        // State
+        let socket = null;
+        let battleData = null;
+        let reconnectTimer = null;
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 5;
+        const RECONNECT_DELAY = 3000; // 3 seconds
+        
+        // Initialize arena
+        function initArena() {
+            arenaEl.innerHTML = '';
+            for (let y = 0; y < 5; y++) {
+                for (let x = 0; x < 5; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.id = `cell-${x}-${y}`;
+                    arenaEl.appendChild(cell);
+                }
+            }
+        }
+        
+        // Update arena with player positions
+        function updateArena(p1Pos, p2Pos) {
+            // Clear all cells
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.className = 'cell';
+                cell.textContent = '';
+            });
+            
+            // Set player positions
+            if (p1Pos) {
+                const p1Cell = document.getElementById(`cell-${p1Pos[0]}-${p1Pos[1]}`);
+                if (p1Cell) {
+                    p1Cell.className = 'cell player1';
+                    p1Cell.textContent = 'P1';
+                }
+            }
+            
+            if (p2Pos) {
+                const p2Cell = document.getElementById(`cell-${p2Pos[0]}-${p2Pos[1]}`);
+                if (p2Cell) {
+                    p2Cell.className = 'cell player2';
+                    p2Cell.textContent = 'P2';
+                }
+            }
+        }
+        
+        // Add event to the events list
+        function addEvent(event) {
+            const div = document.createElement('div');
+            div.className = `event ${event.type}`;
+            div.textContent = event.message || JSON.stringify(event);
+            eventsEl.appendChild(div);
+            eventsEl.scrollTop = eventsEl.scrollHeight;
+        }
+        
+        // Connect to WebSocket server
+        function connect() {
+            try {
+                statusEl.textContent = 'Connecting...';
+                clearTimeout(reconnectTimer);
+                
+                // Create WebSocket connection
+                socket = new WebSocket(`ws://${window.location.hostname}:5556`);
+                
+                socket.onopen = () => {
+                    statusEl.textContent = 'Connected';
+                    addEvent({type: 'info', message: 'Connected to server'});
+                    reconnectAttempts = 0; // Reset reconnect attempts
+                };
+                
+                socket.onclose = (event) => {
+                    statusEl.textContent = 'Disconnected';
+                    addEvent({type: 'info', message: `Disconnected from server (code: ${event.code})`});
+                    socket = null;
+                    
+                    // Attempt to reconnect if not manually disconnected
+                    if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                        reconnectAttempts++;
+                        const delay = RECONNECT_DELAY * Math.min(reconnectAttempts, 3);
+                        addEvent({
+                            type: 'info', 
+                            message: `Attempting to reconnect in ${delay/1000} seconds... (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`
+                        });
+                        reconnectTimer = setTimeout(connect, delay);
+                    } else {
+                        addEvent({
+                            type: 'error', 
+                            message: 'Maximum reconnection attempts reached. Please reconnect manually.'
+                        });
+                    }
+                };
+                
+                socket.onerror = (error) => {
+                    statusEl.textContent = 'Error';
+                    addEvent({type: 'error', message: `WebSocket error: ${error.message || 'Unknown error'}`});
+                };
+                
+                socket.onmessage = (event) => {
+                    // Handle ping messages
+                    if (event.data === 'ping') {
+                        socket.send('pong');
+                        return;
+                    }
+                    
+                    try {
+                        const data = JSON.parse(event.data);
+                        handleMessage(data);
+                    } catch (e) {
+                        addEvent({type: 'error', message: `Error parsing message: ${e.message}`});
+                    }
+                };
+            } catch (e) {
+                statusEl.textContent = 'Connection failed';
+                addEvent({type: 'error', message: `Connection error: ${e.message}`});
+            }
+        }
+        
+        // Handle incoming message
+        function handleMessage(data) {
+            console.log('Received message:', data);
+            
+            if (data.type === 'battle_info') {
+                handleBattleInfo(data.data);
+            } else if (data.type === 'battle_start') {
+                handleBattleStart(data.data);
+            } else if (data.type === 'battle_end') {
+                handleBattleEnd(data.data);
+            } else if (data.type === 'event') {
+                handleEvent(data.data);
+            }
+        }
+        
+        // Handle battle info
+        function handleBattleInfo(data) {
+            battleData = data;
+            updatePlayerInfo();
+            addEvent({type: 'info', message: `Battle info received: ${data.players[0].name} vs ${data.players[1].name}`});
+        }
+        
+        // Handle battle start
+        function handleBattleStart(data) {
+            battleData = data;
+            updatePlayerInfo();
+            addEvent({type: 'info', message: `Battle started: ${data.players[0].name} vs ${data.players[1].name}`});
+        }
+        
+        // Handle battle end
+        function handleBattleEnd(data) {
+            addEvent({type: 'victory', message: `Battle ended. Winner: ${data.winner}`});
+        }
+        
+        // Handle event
+        function handleEvent(event) {
+            addEvent(event);
+            
+            if (event.type === 'attack' && battleData) {
+                // Update HP for the target player
+                for (let i = 0; i < battleData.players.length; i++) {
+                    if (battleData.players[i].name === event.target) {
+                        battleData.players[i].hp = Math.max(0, battleData.players[i].hp - event.damage);
+                        updatePlayerInfo();
+                        break;
+                    }
+                }
+            } else if (event.type === 'movement' && battleData) {
+                // Update position for the player
+                for (let i = 0; i < battleData.players.length; i++) {
+                    if (battleData.players[i].name === event.player) {
+                        battleData.players[i].position = event.new_position;
+                        updatePlayerInfo();
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Update player info
+        function updatePlayerInfo() {
+            if (!battleData || !battleData.players || battleData.players.length < 2) return;
+            
+            const p1 = battleData.players[0];
+            const p2 = battleData.players[1];
+            
+            p1NameEl.textContent = p1.name;
+            p1HpEl.textContent = p1.hp;
+            p1MaxHpEl.textContent = p1.max_hp;
+            
+            p2NameEl.textContent = p2.name;
+            p2HpEl.textContent = p2.hp;
+            p2MaxHpEl.textContent = p2.max_hp;
+            
+            updateArena(p1.position, p2.position);
+        }
+        
+        // Start a duel
+        function startDuel() {
+            fetch('/start-duel', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                addEvent({type: 'info', message: `Requested new duel: ${data.message || JSON.stringify(data)}`});
+            })
+            .catch(error => {
+                addEvent({type: 'error', message: `Error starting duel: ${error.message}`});
+            });
+        }
+        
+        // Event listeners
+        connectBtn.addEventListener('click', connect);
+        startBtn.addEventListener('click', startDuel);
+        
+        // Initialize
+        initArena();
+        connect(); // Auto-connect on page load
+    </script>
+</body>
+</html> 

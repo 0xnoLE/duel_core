@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DuelSim Web Client</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #111;
+            color: #0f0;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        h1, h2, h3 {
+            color: #0f0;
+            text-shadow: 0 0 5px #0f0;
+        }
+        button {
+            background-color: #000;
+            color: #0f0;
+            border: 1px solid #0f0;
+            padding: 8px 15px;
+            margin: 5px;
+            cursor: pointer;
+            font-family: 'Courier New', monospace;
+        }
+        button:hover {
+            background-color: #333;
+        }
+        .connection-status {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .connected {
+            background-color: rgba(0, 255, 0, 0.2);
+            border: 1px solid #0f0;
+        }
+        .disconnected {
+            background-color: rgba(255, 0, 0, 0.2);
+            border: 1px solid #f00;
+        }
+        .connecting {
+            background-color: rgba(255, 255, 0, 0.2);
+            border: 1px solid #ff0;
+        }
+        
+        /* Grid Arena */
+        .arena {
+            display: grid;
+            grid-template-columns: repeat(5, 50px);
+            grid-template-rows: repeat(5, 50px);
+            gap: 2px;
+            margin: 20px 0;
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            background-color: #222;
+            border: 1px solid #444;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            position: relative;
+        }
+        .player1-cell {
+            background-color: rgba(0, 100, 255, 0.3);
+        }
+        .player2-cell {
+            background-color: rgba(255, 0, 0, 0.3);
+        }
+        
+        /* Player Stats */
+        .player-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 20px;
+        }
+        .player-card {
+            border: 1px solid #0f0;
+            padding: 10px;
+            width: 45%;
+            background-color: #000;
+        }
+        .hp-bar {
+            height: 20px;
+            background-color: #222;
+            margin-top: 5px;
+        }
+        .hp-fill {
+            height: 100%;
+            background-color: #0f0;
+            transition: width 0.3s;
+        }
+        
+        /* Combat Log */
+        #events {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #0f0;
+            padding: 10px;
+            margin-top: 20px;
+            background-color: #000;
+            font-family: 'Courier New', monospace;
+        }
+        .event {
+            margin-bottom: 5px;
+            padding: 5px;
+            border-radius: 3px;
+        }
+        .attack {
+            color: #f55;
+        }
+        .movement {
+            color: #5af;
+        }
+        .victory {
+            color: #5f5;
+            font-weight: bold;
+        }
+        .info {
+            color: #ff5;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>DuelSim Web Client</h1>
+        
+        <div id="connection-status" class="connection-status disconnected">
+            <p>Status: <span id="status-text">Disconnected</span></p>
+        </div>
+        
+        <div class="controls">
+            <button id="connect-btn">Connect</button>
+            <button id="disconnect-btn" style="display: none;">Disconnect</button>
+            <button id="start-duel-btn">Start New Duel</button>
+        </div>
+        
+        <div id="battle-area">
+            <div id="no-battle" style="display: block;">
+                <p>No battle in progress. Please wait for a battle to start or click "Start New Duel".</p>
+            </div>
+            
+            <div id="battle-info" style="display: none;">
+                <div class="player-stats">
+                    <div class="player-card">
+                        <h3 id="player1-name">Player 1</h3>
+                        <div>HP: <span id="player1-hp">0</span>/<span id="player1-max-hp">0</span></div>
+                        <div class="hp-bar"><div id="player1-health" class="hp-fill" style="width: 100%;"></div></div>
+                        <div>Position: <span id="player1-pos">(0,0)</span></div>
+                    </div>
+                    
+                    <div class="player-card">
+                        <h3 id="player2-name">Player 2</h3>
+                        <div>HP: <span id="player2-hp">0</span>/<span id="player2-max-hp">0</span></div>
+                        <div class="hp-bar"><div id="player2-health" class="hp-fill" style="width: 100%;"></div></div>
+                        <div>Position: <span id="player2-pos">(0,0)</span></div>
+                    </div>
+                </div>
+                
+                <h2>Arena</h2>
+                <div id="arena" class="arena">
+                    <!-- Grid cells will be generated by JavaScript -->
+                </div>
+                
+                <h2>Battle Events</h2>
+                <div id="events">
+                    <div id="event-list"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // DOM elements
+        const statusText = document.getElementById('status-text');
+        const connectionStatus = document.getElementById('connection-status');
+        const connectBtn = document.getElementById('connect-btn');
+        const disconnectBtn = document.getElementById('disconnect-btn');
+        const startDuelBtn = document.getElementById('start-duel-btn');
+        const noBattle = document.getElementById('no-battle');
+        const battleInfo = document.getElementById('battle-info');
+        const player1Name = document.getElementById('player1-name');
+        const player2Name = document.getElementById('player2-name');
+        const player1HP = document.getElementById('player1-hp');
+        const player2HP = document.getElementById('player2-hp');
+        const player1MaxHP = document.getElementById('player1-max-hp');
+        const player2MaxHP = document.getElementById('player2-max-hp');
+        const player1Health = document.getElementById('player1-health');
+        const player2Health = document.getElementById('player2-health');
+        const player1Pos = document.getElementById('player1-pos');
+        const player2Pos = document.getElementById('player2-pos');
+        const arena = document.getElementById('arena');
+        const eventList = document.getElementById('event-list');
+        
+        // State
+        let socket = null;
+        let connected = false;
+        let battleData = null;
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 5;
+        
+        // Initialize arena grid
+        function initArena() {
+            arena.innerHTML = '';
+            for (let y = 0; y < 5; y++) {
+                for (let x = 0; x < 5; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell';
+                    cell.id = `cell-${x}-${y}`;
+                    arena.appendChild(cell);
+                }
+            }
+        }
+        
+        // Update arena with player positions
+        function updateArena(player1Pos, player2Pos) {
+            // Clear all cells
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.textContent = '';
+                cell.className = 'cell';
+            });
+            
+            // Set player positions
+            if (player1Pos && player1Pos.length === 2) {
+                const [x1, y1] = player1Pos;
+                const cell1 = document.getElementById(`cell-${x1}-${y1}`);
+                if (cell1) {
+                    cell1.textContent = '1';
+                    cell1.className = 'cell player1-cell';
+                }
+            }
+            
+            if (player2Pos && player2Pos.length === 2) {
+                const [x2, y2] = player2Pos;
+                const cell2 = document.getElementById(`cell-${x2}-${y2}`);
+                if (cell2) {
+                    cell2.textContent = '2';
+                    cell2.className = 'cell player2-cell';
+                }
+            }
+        }
+        
+        // Connect to WebSocket server
+        function connect() {
+            if (socket && socket.readyState <= 1) {
+                return; // Already connecting or connected
+            }
+            
+            statusText.textContent = 'Connecting...';
+            connectionStatus.className = 'connection-status connecting';
+            
+            try {
+                // Create WebSocket connection with the correct port
+                socket = new WebSocket(`ws://${window.location.hostname}:5556`);
+                
+                // Connection opened
+                socket.addEventListener('open', function(event) {
+                    connected = true;
+                    statusText.textContent = 'Connected';
+                    connectionStatus.className = 'connection-status connected';
+                    connectBtn.style.display = 'none';
+                    disconnectBtn.style.display = 'inline-block';
+                    
+                    // Add connected event
+                    addEvent({
+                        type: 'info',
+                        message: 'Connected to server'
+                    });
+                });
+                
+                // Connection closed
+                socket.addEventListener('close', function(event) {
+                    connected = false;
+                    statusText.textContent = 'Disconnected';
+                    connectionStatus.className = 'connection-status disconnected';
+                    connectBtn.style.display = 'inline-block';
+                    disconnectBtn.style.display = 'none';
+                    
+                    // Add disconnected event
+                    addEvent({
+                        type: 'error',
+                        message: 'Disconnected from server'
+                    });
+                    
+                    // Try to reconnect if not manually disconnected
+                    if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                        reconnectAttempts++;
+                        setTimeout(connect, 3000); // Wait 3 seconds before reconnecting
+                    }
+                });
+                
+                // Connection error
+                socket.addEventListener('error', function(event) {
+                    console.error("WebSocket error:", event);
+                    statusText.textContent = 'Error';
+                    connectionStatus.className = 'connection-status disconnected';
+                    
+                    // Add error event
+                    addEvent({
+                        type: 'error',
+                        message: 'Connection error'
+                    });
+                });
+                
+                // Listen for messages
+                socket.addEventListener('message', function(event) {
+                    try {
+                        const message = JSON.parse(event.data);
+                        console.log("Received message:", message);
+                        
+                        // Handle different message types
+                        if (message.type === 'battle_info') {
+                            handleBattleInfo(message.data);
+                        } else if (message.type === 'event') {
+                            handleEvent(message.data);
+                        } else if (message.type === 'battle_start') {
+                            handleBattleStart(message.data);
+                        } else if (message.type === 'battle_end') {
+                            handleBattleEnd(message.data);
+                        } else if (message.type === 'duel_ended') {
+                            handleBattleEnd(message.data);
+                        }
+                    } catch (error) {
+                        console.error('Error parsing message:', error, event.data);
+                    }
+                });
+            } catch (error) {
+                console.error('WebSocket connection error:', error);
+                statusText.textContent = 'Connection Failed';
+                connectionStatus.className = 'connection-status disconnected';
+                
+                // Try to reconnect
+                if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                    reconnectAttempts++;
+                    setTimeout(connect, 3000); // Wait 3 seconds before reconnecting
+                }
+            }
+        }
+        
+        // Disconnect from server
+        function disconnect() {
+            if (socket) {
+                socket.close();
+            }
+        }
+        
+        // Start a new duel
+        function startDuel() {
+            // Send request to start a new duel
+            fetch('/start-duel', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log("Duel started:", data);
+                addEvent({
+                    type: 'info',
+                    message: `Requested new duel: ${data.message || JSON.stringify(data)}`
+                });
+            })
+            .catch(error => {
+                console.error("Error starting duel:", error);
+                addEvent({
+                    type: 'error',
+                    message: `Error starting duel: ${error.message}`
+                });
+            });
+        }
+        
+        // Add event to the event list
+        function addEvent(event) {
+            const div = document.createElement('div');
+            div.className = `event ${event.type || ''}`;
+            div.textContent = event.message || JSON.stringify(event);
+            eventList.appendChild(div);
+            eventList.scrollTop = eventList.scrollHeight;
+        }
+        
+        // Handle battle info
+        function handleBattleInfo(data) {
+            console.log("Battle info received:", data);
+            
+            // Store battle data
+            battleData = data;
+            
+            // Show battle info
+            noBattle.style.display = 'none';
+            battleInfo.style.display = 'block';
+            
+            // Initialize arena
+            initArena();
+            
+            // Update player info
+            updatePlayerInfo();
+            
+            // Add battle info event
+            addEvent({
+                type: 'info',
+                message: `Battle info received: ${data.players[0].name} vs ${data.players[1].name}`
+            });
+        }
+        
+        // Handle event
+        function handleEvent(event) {
+            console.log("Event received:", event);
+            
+            // Add event to list
+            addEvent(event);
+            
+            // Update battle state based on event
+            if (event.type === 'attack' && battleData) {
+                // Update HP for the target player
+                for (let i = 0; i < battleData.players.length; i++) {
+                    if (battleData.players[i].name === event.target) {
+                        battleData.players[i].hp = Math.max(0, battleData.players[i].hp - event.damage);
+                        updatePlayerInfo();
+                        break;
+                    }
+                }
+            } else if (event.type === 'movement' && battleData) {
+                // Update position for the player
+                for (let i = 0; i < battleData.players.length; i++) {
+                    if (battleData.players[i].name === event.player) {
+                        battleData.players[i].position = event.new_position;
+                        updatePlayerInfo();
+                        break;
+                    }
+                }
+            }
+        }
+        
+        // Handle battle start
+        function handleBattleStart(data) {
+            console.log("Battle started:", data);
+            
+            // Store battle data
+            battleData = data;
+            
+            // Show battle info
+            noBattle.style.display = 'none';
+            battleInfo.style.display = 'block';
+            
+            // Initialize arena
+            initArena();
+            
+            // Update player info
+            updatePlayerInfo();
+            
+            // Add battle start event
+            addEvent({
+                type: 'info',
+                message: `Battle started: ${data.players[0].name} vs ${data.players[1].name}`
+            });
+        }
+        
+        // Handle battle end
+        function handleBattleEnd(data) {
+            console.log("Battle ended:", data);
+            
+            // Add battle end event
+            addEvent({
+                type: 'victory',
+                message: `Battle ended. Winner: ${data.winner}`
+            });
+        }
+        
+        // Update player info
+        function updatePlayerInfo() {
+            if (!battleData || !battleData.players || battleData.players.length < 2) {
+                return;
+            }
+            
+            const player1 = battleData.players[0];
+            const player2 = battleData.players[1];
+            
+            player1Name.textContent = player1.name;
+            player2Name.textContent = player2.name;
+            
+            player1HP.textContent = player1.hp;
+            player2HP.textContent = player2.hp;
+            
+            player1MaxHP.textContent = player1.max_hp;
+            player2MaxHP.textContent = player2.max_hp;
+            
+            const player1HealthPercent = Math.max(0, Math.min(100, (player1.hp / player1.max_hp) * 100));
+            const player2HealthPercent = Math.max(0, Math.min(100, (player2.hp / player2.max_hp) * 100));
+            
+            player1Health.style.width = `${player1HealthPercent}%`;
+            player2Health.style.width = `${player2HealthPercent}%`;
+            
+            player1Pos.textContent = `(${player1.position[0]}, ${player1.position[1]})`;
+            player2Pos.textContent = `(${player2.position[0]}, ${player2.position[1]})`;
+            
+            // Update arena
+            updateArena(player1.position, player2.position);
+        }
+        
+        // Event listeners
+        connectBtn.addEventListener('click', connect);
+        disconnectBtn.addEventListener('click', disconnect);
+        startDuelBtn.addEventListener('click', startDuel);
+        
+        // Initialize arena
+        initArena();
+        
+        // Auto-connect on page load
+        window.addEventListener('load', connect);
+    </script>
+</body>
+</html> 

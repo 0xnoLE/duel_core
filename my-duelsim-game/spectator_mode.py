@@ -19,914 +19,490 @@ from duelsim import run_duel_simulation
 from duelsim.utils.enhanced_visualizer import EnhancedVisualizer
 from future_paths.betting_system.betting_integration import BettingManager, BettingSpectatorIntegration
 import uuid
+import base64
+import hashlib
+import struct
+import re
 
 # Initialize colorama for cross-platform color support
 init(autoreset=True)
 
-class SpectatorServer:
-    """Server that broadcasts duel events to connected spectators"""
+class WebSocketServer:
+    """WebSocket server implementation"""
     
-    def __init__(self, host='localhost', port=5555):
-        """Initialize the spectator server"""
-        self.host = host
+    def __init__(self, port=5556, ping_interval=30):
         self.port = port
         self.server_socket = None
-        self.clients = []
-        self.client_info = {}  # Store client info like user_id
+        self.clients = {}
+        self.clients_lock = threading.Lock()
         self.running = False
-        self.event_queue = queue.Queue()
+        self.ping_interval = ping_interval
         self.battle_data = None
-        self.current_tick = 0
-        
-        # Initialize betting manager
-        self.betting_manager = BettingManager()
-        self.betting_integration = BettingSpectatorIntegration(self, self.betting_manager)
+        self.betting_manager = None
+        self.betting_integration = None
         
     def start(self):
-        """Start the spectator server"""
+        """Start the WebSocket server"""
         try:
-            # Create server socket
             self.server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.server_socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            self.server_socket.bind((self.host, self.port))
+            self.server_socket.bind(('localhost', self.port))
             self.server_socket.listen(5)
-            self.server_socket.setblocking(0)  # Non-blocking mode
-            
             self.running = True
-            print(f"{Fore.GREEN}Spectator server started on {self.host}:{self.port}")
+            print(f"{Fore.GREEN}WebSocket server started on port {self.port}")
             
-            # Start client handler thread
-            client_thread = threading.Thread(target=self._handle_clients)
-            client_thread.daemon = True
-            client_thread.start()
+            # Start the thread that accepts new client connections
+            self._accept_thread = threading.Thread(target=self._accept_clients)
+            self._accept_thread.daemon = True
+            self._accept_thread.start()
+            
+            # Start the keep-alive thread
+            self.keep_alive_thread = threading.Thread(target=self._send_keep_alive)
+            self.keep_alive_thread.daemon = True
+            self.keep_alive_thread.start()
             
             return True
         except Exception as e:
-            print(f"{Fore.RED}Failed to start spectator server: {e}")
+            print(f"{Fore.RED}Error starting WebSocket server: {e}")
             return False
     
     def stop(self):
-        """Stop the server"""
+        """Stop the WebSocket server"""
+        print(f"{Fore.YELLOW}Stopping WebSocket server...")
         self.running = False
-        print(f"{Fore.YELLOW}Stopping spectator server...")
-        
-        # Close all client connections
-        clients_copy = self.clients.copy()  # Make a copy to avoid modification during iteration
-        for client in clients_copy:
-            try:
-                client.close()
-            except:
-                pass
-        
-        # Clear the client list
-        self.clients.clear()
         
         # Close the server socket
         if self.server_socket:
             try:
+                if hasattr(self.server_socket, 'fileno') and self.server_socket.fileno() != -1:
+                    self.server_socket.shutdown(socket.SHUT_RDWR)
+            except OSError as e:
+                if e.errno not in [107, 9, 10057]:
+                    print(f"{Fore.RED}Error shutting down server socket: {e}")
+            finally:
                 self.server_socket.close()
-            except:
-                pass
-            self.server_socket = None
+                self.server_socket = None
         
-        # Wait for the client handler thread to finish
-        if self.client_handler_thread and self.client_handler_thread.is_alive():
-            self.client_handler_thread.join(timeout=1.0)
-        
-        print(f"{Fore.GREEN}Spectator server stopped")
-        return True
-    
-    def _handle_clients(self):
-        """Handle client connections and messages"""
-        try:
-            # Create a list of sockets to monitor
-            input_list = [self.server_socket]
-            
-            while self.running:
-                # Use a timeout to prevent blocking indefinitely
+        # Close all client connections
+        with self.clients_lock:
+            print(f"{Fore.YELLOW}Closing {len(self.clients)} client connections...")
+            for client_socket in list(self.clients.keys()):
                 try:
-                    # Use select with a timeout to avoid blocking forever
-                    readable, _, exceptional = select.select(input_list, [], input_list, 0.5)
-                except (ValueError, select.error) as e:
-                    # Handle invalid file descriptors
-                    if "file descriptor" in str(e).lower():
-                        # Clean up invalid sockets
-                        input_list = [s for s in input_list if s is not None and s.fileno() >= 0]
-                        # Make sure server socket is still in the list if it's valid
-                        if self.server_socket and self.server_socket.fileno() >= 0 and self.server_socket not in input_list:
-                            input_list.append(self.server_socket)
-                        time.sleep(0.1)
-                        continue
-                    else:
-                        raise
-                
-                # Handle readable sockets
-                for sock in readable:
-                    # New connection
-                    if sock == self.server_socket:
-                        client_socket, addr = sock.accept()
-                        client_socket.setblocking(0)
-                        input_list.append(client_socket)
-                        self.clients.append(client_socket)
-                        
-                        # Initialize client info
-                        self.client_info[client_socket] = {
-                            "user_id": str(uuid.uuid4()),
-                            "connected_at": datetime.now().isoformat(),
-                            "is_websocket": False  # Will be set to True during WebSocket handshake
-                        }
-                        
-                        print(f"{Fore.GREEN}New spectator connected: {addr}")
-                        
-                        # Send welcome message
-                        self._send_welcome_message(client_socket)
-                        
-                        # Send battle info if available
-                        if self.battle_data:
-                            self._send_battle_info(client_socket)
-                    
-                    # Client message
-                    else:
-                        try:
-                            data = sock.recv(4096)
-                            if data:
-                                # Process the data
-                                self._process_client_message(sock, data)
-                            else:
-                                # Empty data means client disconnected
-                                self._remove_client(sock, input_list)
-                        except Exception as e:
-                            print(f"{Fore.RED}Error receiving from client: {e}")
-                            self._remove_client(sock, input_list)
-                
-                # Handle exceptional sockets
-                for sock in exceptional:
-                    print(f"{Fore.YELLOW}Exceptional condition on socket")
-                    self._remove_client(sock, input_list)
-                
-                # Process events in the queue
-                self._process_event_queue()
-                
-                # Small delay to prevent CPU hogging
-                time.sleep(0.01)
+                    self._send_close_frame(client_socket)
+                    client_socket.close()
+                except:
+                    pass
+            self.clients.clear()
         
-        except Exception as e:
-            print(f"{Fore.RED}Error in client handler: {e}")
-            import traceback
-            traceback.print_exc()
+        print(f"{Fore.GREEN}WebSocket server stopped.")
     
-    def _remove_client(self, client_socket, input_list):
-        """Remove a client from the server"""
-        try:
-            addr = client_socket.getpeername()
-            print(f"{Fore.YELLOW}Spectator disconnected: {addr}")
-        except:
-            pass
-        
-        if client_socket in self.clients:
-            self.clients.remove(client_socket)
-        
-        if client_socket in input_list:
-            input_list.remove(client_socket)
-        
-        try:
-            client_socket.close()
-        except:
-            pass
+    def _accept_clients(self):
+        """Accept new client connections"""
+        while self.running:
+            try:
+                client_socket, addr = self.server_socket.accept()
+                client_socket.settimeout(60)
+                
+                # Start a thread to handle this client
+                client_thread = threading.Thread(target=self._handle_client, args=(client_socket, addr))
+                client_thread.daemon = True
+                client_thread.start()
+            except OSError as e:
+                if not self.running:
+                    break
+                print(f"{Fore.RED}Error accepting client: {e}")
+                time.sleep(0.1)
     
-    def _process_client_message(self, client_socket, data):
-        """Process a message from a client"""
+    def _handle_client(self, client_socket, addr):
+        """Handle a client connection"""
         try:
-            # Check if this is a WebSocket client
-            if client_socket in self.client_info and self.client_info[client_socket].get("is_websocket", False):
-                # Decode WebSocket frame
-                message = self._decode_websocket_frame(data, client_socket)
-                if message is None:
-                    return
-            else:
-                # Regular client
-                message = data.decode('utf-8').strip()
-            
-            # Check if this is an HTTP request
-            if message.startswith('GET ') or message.startswith('POST '):
-                self._handle_http_request(client_socket, message)
+            # Handle WebSocket handshake
+            if not self._handle_handshake(client_socket):
+                print(f"{Fore.RED}WebSocket handshake failed for {addr}")
+                client_socket.close()
                 return
             
-            # Get or create user ID for this client
-            if client_socket not in self.client_info:
-                self.client_info[client_socket] = {
-                    "user_id": str(uuid.uuid4()),
-                    "connected_at": datetime.now().isoformat()
+            # Add client to clients list
+            with self.clients_lock:
+                self.clients[client_socket] = {
+                    'address': addr,
+                    'connected_at': time.time(),
+                    'last_ping': time.time()
                 }
             
-            user_id = self.client_info[client_socket]["user_id"]
+            print(f"{Fore.GREEN}New spectator connected: {addr}")
             
-            # Simple command processing
-            if message.startswith('/'):
-                command_parts = message[1:].split()
-                command = command_parts[0].lower()
-                args = command_parts[1:] if len(command_parts) > 1 else []
-                
-                # Betting commands
-                if command in ['bet', 'odds', 'balance', 'mybets']:
-                    self.betting_integration.process_betting_command(
-                        client_socket, user_id, command, args
-                    )
-                    return
-                
-                # Other commands
-                if command == 'info':
-                    # Send battle info
-                    self._send_battle_info(client_socket)
-                
-                elif command == 'stats':
-                    # Send spectator stats
-                    stats = {
-                        'spectators': len(self.clients),
-                        'current_tick': self.current_tick,
-                        'timestamp': datetime.now().isoformat()
-                    }
-                    self._send_to_client(client_socket, json.dumps({
-                        'type': 'stats',
-                        'data': stats
-                    }))
-                
-                elif command == 'help':
-                    # Send help info
-                    help_text = {
-                        'commands': [
-                            '/info - Get battle information',
-                            '/stats - Get spectator statistics',
-                            '/help - Show this help message',
-                            '/bet <player> <amount> - Place a bet on a player',
-                            '/odds - See current betting odds',
-                            '/balance - Check your betting balance',
-                            '/mybets - See your active bets'
-                        ]
-                    }
-                    self._send_to_client(client_socket, json.dumps({
-                        'type': 'help',
-                        'data': help_text
-                    }))
+            # Send battle data if available
+            if self.battle_data:
+                try:
+                    battle_info = json.dumps({
+                        'type': 'battle_info',
+                        'data': self.battle_data
+                    })
+                    self._send_message(client_socket, battle_info)
+                    print(f"{Fore.CYAN}Sent battle data to new client: {addr}")
+                except Exception as e:
+                    print(f"{Fore.RED}Error sending battle data to new client: {e}")
             
-            # Chat message
-            else:
-                # In a real implementation, you would add username, timestamp, etc.
-                chat_message = {
-                    'sender': str(client_socket.getpeername()),
-                    'user_id': user_id,
-                    'message': message,
-                    'timestamp': datetime.now().isoformat()
-                }
+            # Main client loop
+            buffer = bytearray()
+            while self.running:
+                try:
+                    # Use select to check if data is available
+                    ready = select.select([client_socket], [], [], 1.0)
+                    if ready[0]:
+                        data = client_socket.recv(4096)
+                        if not data:
+                            print(f"{Fore.YELLOW}Client {addr} closed connection")
+                            break
+                        
+                        buffer.extend(data)
+                        
+                        # Process WebSocket frames
+                        while len(buffer) >= 2:
+                            # Process a complete WebSocket frame
+                            result, frame_length, message = self._decode_frame(buffer)
+                            
+                            if result is False:
+                                # Need more data
+                                break
+                            
+                            # Remove the processed frame from buffer
+                            buffer = buffer[frame_length:]
+                            
+                            # Handle the frame
+                            if result == 'close':
+                                print(f"{Fore.YELLOW}Received close frame from {addr}")
+                                self._send_close_frame(client_socket)
+                                return
+                            elif result == 'ping':
+                                self._send_pong_frame(client_socket, message)
+                            elif result == 'pong':
+                                with self.clients_lock:
+                                    if client_socket in self.clients:
+                                        self.clients[client_socket]['last_ping'] = time.time()
+                            elif result == 'text':
+                                # Handle text message
+                                try:
+                                    if message == 'pong':
+                                        with self.clients_lock:
+                                            if client_socket in self.clients:
+                                                self.clients[client_socket]['last_ping'] = time.time()
+                                    else:
+                                        print(f"{Fore.CYAN}Received from {addr}: {message[:50]}...")
+                                        # Process client message here
+                                except Exception as e:
+                                    print(f"{Fore.RED}Error processing message from {addr}: {e}")
                 
-                # Broadcast to all clients
-                self.broadcast(json.dumps({
-                    'type': 'chat',
-                    'data': chat_message
-                }))
+                except socket.timeout:
+                    continue
+                except ConnectionResetError:
+                    print(f"{Fore.YELLOW}Connection reset by {addr}")
+                    break
+                except OSError as e:
+                    print(f"{Fore.RED}Socket error with {addr}: {e}")
+                    break
         
         except Exception as e:
-            print(f"{Fore.RED}Error processing client message: {e}")
-    
-    def _handle_http_request(self, client_socket, request):
-        """Handle an HTTP request from a web browser"""
-        try:
-            # Check if this is a WebSocket upgrade request
-            if "Upgrade: websocket" in request and "Sec-WebSocket-Key:" in request:
-                # Extract the WebSocket key
-                websocket_key = None
-                for line in request.split('\r\n'):
-                    if line.startswith("Sec-WebSocket-Key:"):
-                        websocket_key = line.split(": ")[1].strip()
-                        break
-                
-                if websocket_key:
-                    # Perform WebSocket handshake
-                    import base64
-                    import hashlib
-                    
-                    # Compute the WebSocket accept key
-                    magic_string = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
-                    accept_key = base64.b64encode(
-                        hashlib.sha1((websocket_key + magic_string).encode()).digest()
-                    ).decode()
-                    
-                    # Send the WebSocket handshake response
-                    handshake = (
-                        "HTTP/1.1 101 Switching Protocols\r\n"
-                        "Upgrade: websocket\r\n"
-                        "Connection: Upgrade\r\n"
-                        f"Sec-WebSocket-Accept: {accept_key}\r\n"
-                        "\r\n"
-                    )
-                    client_socket.send(handshake.encode())
-                    
-                    # Mark this client as a WebSocket connection
-                    self.client_info[client_socket] = {"is_websocket": True}
-                    
-                    # Send initial battle info if available
-                    if self.battle_data:
-                        self._send_battle_info_ws(client_socket)
-                    
-                    print(f"{Fore.GREEN}WebSocket connection established")
-                    return
-            
-            # Regular HTTP response with a web interface
-            html = """<!DOCTYPE html>
-            <html>
-            <head>
-                <title>DuelSim Spectator Mode</title>
-                <style>
-                    body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background-color: #f0f0f0; }
-                    .container { max-width: 800px; margin: 0 auto; background-color: white; padding: 20px; border-radius: 5px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-                    h1 { color: #333; }
-                    .info { background-color: #e8f4f8; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-                    .error { background-color: #f8e8e8; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-                    .success { background-color: #e8f8e8; padding: 15px; border-radius: 5px; margin-bottom: 20px; }
-                    .button { display: inline-block; background-color: #4CAF50; color: white; padding: 10px 15px; text-decoration: none; border-radius: 4px; margin-right: 10px; cursor: pointer; }
-                    #battle-area { border: 1px solid #ccc; padding: 10px; margin-top: 20px; min-height: 300px; }
-                    .player { margin-bottom: 10px; padding: 10px; border-radius: 5px; }
-                    .player1 { background-color: #e8f4f8; }
-                    .player2 { background-color: #f8e8e8; }
-                    .health-bar { height: 20px; background-color: #ddd; border-radius: 10px; margin-top: 5px; }
-                    .health-fill { height: 100%; background-color: #4CAF50; border-radius: 10px; transition: width 0.3s; }
-                    #events { max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-top: 20px; }
-                    .event { margin-bottom: 5px; padding: 5px; border-radius: 3px; }
-                    .attack { background-color: #ffeeee; }
-                    .movement { background-color: #eeeeff; }
-                    .victory { background-color: #eeffee; font-weight: bold; }
-                    .connection-status { padding: 10px; border-radius: 5px; margin-bottom: 10px; }
-                    .connected { background-color: #e8f8e8; }
-                    .disconnected { background-color: #f8e8e8; }
-                    .connecting { background-color: #f8f8e8; }
-                </style>
-            </head>
-            <body>
-                <div class="container">
-                    <h1>DuelSim Spectator Mode</h1>
-                    
-                    <div id="connection-status" class="connection-status disconnected">
-                        <p>Status: <span id="status-text">Disconnected</span></p>
-                    </div>
-                    
-                    <div class="info">
-                        <p>This is a web-based spectator interface for DuelSim.</p>
-                        <p>Connect to the WebSocket server to see real-time battle updates.</p>
-                        <button id="connect-btn" class="button">Connect</button>
-                        <button id="disconnect-btn" class="button" style="display: none;">Disconnect</button>
-                    </div>
-                    
-                    <div id="battle-area">
-                        <h2>Current Battle</h2>
-                        <div id="no-battle" style="display: block;">
-                            <p>No battle in progress. Please wait for a battle to start.</p>
-                        </div>
-                        
-                        <div id="battle-info" style="display: none;">
-                            <div class="player player1">
-                                <h3 id="player1-name">Player 1</h3>
-                                <div class="health-bar">
-                                    <div id="player1-health" class="health-fill" style="width: 100%;"></div>
-                                </div>
-                                <p id="player1-stats">HP: 100/100</p>
-                            </div>
-                            
-                            <div class="player player2">
-                                <h3 id="player2-name">Player 2</h3>
-                                <div class="health-bar">
-                                    <div id="player2-health" class="health-fill" style="width: 100%;"></div>
-                                </div>
-                                <p id="player2-stats">HP: 100/100</p>
-                            </div>
-                            
-                            <div id="events">
-                                <h3>Battle Events</h3>
-                                <div id="event-list"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <script>
-                    // WebSocket connection
-                    let socket = null;
-                    let connected = false;
-                    
-                    // DOM elements
-                    const statusText = document.getElementById('status-text');
-                    const connectionStatus = document.getElementById('connection-status');
-                    const connectBtn = document.getElementById('connect-btn');
-                    const disconnectBtn = document.getElementById('disconnect-btn');
-                    const noBattle = document.getElementById('no-battle');
-                    const battleInfo = document.getElementById('battle-info');
-                    const player1Name = document.getElementById('player1-name');
-                    const player2Name = document.getElementById('player2-name');
-                    const player1Health = document.getElementById('player1-health');
-                    const player2Health = document.getElementById('player2-health');
-                    const player1Stats = document.getElementById('player1-stats');
-                    const player2Stats = document.getElementById('player2-stats');
-                    const eventList = document.getElementById('event-list');
-                    
-                    // Connect to WebSocket server
-                    function connect() {
-                        if (socket && socket.readyState <= 1) {
-                            return; // Already connecting or connected
-                        }
-                        
-                        statusText.textContent = 'Connecting...';
-                        connectionStatus.className = 'connection-status connecting';
-                        
-                        try {
-                            // Create WebSocket connection
-                            socket = new WebSocket(`ws://${window.location.hostname}:{port}`);
-                            
-                            // Connection opened
-                            socket.addEventListener('open', function(event) {
-                                connected = true;
-                                statusText.textContent = 'Connected';
-                                connectionStatus.className = 'connection-status connected';
-                                connectBtn.style.display = 'none';
-                                disconnectBtn.style.display = 'inline-block';
-                                
-                                // Add connected event
-                                addEvent({
-                                    type: 'info',
-                                    message: 'Connected to server'
-                                });
-                            });
-                            
-                            // Connection closed
-                            socket.addEventListener('close', function(event) {
-                                connected = false;
-                                statusText.textContent = 'Disconnected';
-                                connectionStatus.className = 'connection-status disconnected';
-                                connectBtn.style.display = 'inline-block';
-                                disconnectBtn.style.display = 'none';
-                                
-                                // Add disconnected event
-                                addEvent({
-                                    type: 'error',
-                                    message: 'Disconnected from server'
-                                });
-                            });
-                            
-                            // Connection error
-                            socket.addEventListener('error', function(event) {
-                                statusText.textContent = 'Error';
-                                connectionStatus.className = 'connection-status disconnected';
-                                
-                                // Add error event
-                                addEvent({
-                                    type: 'error',
-                                    message: 'Connection error'
-                                });
-                            });
-                            
-                            // Listen for messages
-                            socket.addEventListener('message', function(event) {
-                                try {
-                                    const message = JSON.parse(event.data);
-                                    
-                                    // Handle different message types
-                                    if (message.type === 'battle_info') {
-                                        handleBattleInfo(message.data);
-                                    } else if (message.type === 'event') {
-                                        handleEvent(message.data);
-                                    } else if (message.type === 'battle_start') {
-                                        handleBattleStart(message.data);
-                                    } else if (message.type === 'battle_end') {
-                                        handleBattleEnd(message.data);
-                                    }
-                                } catch (error) {
-                                    console.error('Error parsing message:', error);
-                                }
-                            });
-                        } catch (error) {
-                            statusText.textContent = 'Connection Failed';
-                            connectionStatus.className = 'connection-status disconnected';
-                            console.error('WebSocket connection error:', error);
-                        }
-                    }
-                    
-                    // Disconnect from server
-                    function disconnect() {
-                        if (socket) {
-                            socket.close();
-                        }
-                    }
-                    
-                    // Handle battle info
-                    function handleBattleInfo(data) {
-                        // Store battle data
-                        battleData = data;
-                        
-                        // Show battle info
-                        noBattle.style.display = 'none';
-                        battleInfo.style.display = 'block';
-                        
-                        // Update player info
-                        updatePlayerInfo();
-                        
-                        // Add battle info event
-                        addEvent({
-                            type: 'info',
-                            message: `Battle info received: ${data.players[0].name} vs ${data.players[1].name}`
-                        });
-                    }
-                    
-                    // Handle event
-                    function handleEvent(event) {
-                        // Add event to list
-                        addEvent(event);
-                        
-                        // Update battle state based on event
-                        if (event.type === 'attack' && battleData) {
-                            // Update HP for the target player
-                            for (let i = 0; i < battleData.players.length; i++) {
-                                if (battleData.players[i].name === event.target) {
-                                    battleData.players[i].hp = Math.max(0, battleData.players[i].hp - event.damage);
-                                    updatePlayerInfo();
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                    
-                    // Add event to the event list
-                    function addEvent(event) {
-                        const div = document.createElement('div');
-                        div.className = `event ${event.type || ''}`;
-                        div.textContent = event.message || JSON.stringify(event);
-                        eventList.appendChild(div);
-                        eventList.scrollTop = eventList.scrollHeight;
-                    }
-                    
-                    // Handle battle start
-                    function handleBattleStart(data) {
-                        // Store battle data
-                        battleData = data;
-                        
-                        // Show battle info
-                        noBattle.style.display = 'none';
-                        battleInfo.style.display = 'block';
-                        
-                        // Update player info
-                        updatePlayerInfo();
-                        
-                        // Add battle start event
-                        addEvent({
-                            type: 'info',
-                            message: `Battle started: ${data.players[0].name} vs ${data.players[1].name}`
-                        });
-                    }
-                    
-                    // Handle battle end
-                    function handleBattleEnd(data) {
-                        // Add battle end event
-                        addEvent({
-                            type: 'victory',
-                            message: `Battle ended. Winner: ${data.winner}`
-                        });
-                    }
-                    
-                    // Update player info
-                    function updatePlayerInfo() {
-                        if (!battleData || !battleData.players || battleData.players.length < 2) {
-                            return;
-                        }
-                        
-                        const player1 = battleData.players[0];
-                        const player2 = battleData.players[1];
-                        
-                        player1Name.textContent = player1.name;
-                        player2Name.textContent = player2.name;
-                        
-                        const player1HealthPercent = Math.max(0, Math.min(100, (player1.hp / player1.max_hp) * 100));
-                        const player2HealthPercent = Math.max(0, Math.min(100, (player2.hp / player2.max_hp) * 100));
-                        
-                        player1Health.style.width = `${player1HealthPercent}%`;
-                        player2Health.style.width = `${player2HealthPercent}%`;
-                        
-                        player1Stats.textContent = `HP: ${player1.hp}/${player1.max_hp}`;
-                        player2Stats.textContent = `HP: ${player2.hp}/${player2.max_hp}`;
-                    }
-                    
-                    // Event listeners
-                    connectBtn.addEventListener('click', connect);
-                    disconnectBtn.addEventListener('click', disconnect);
-                    
-                    // Auto-connect on page load
-                    window.addEventListener('load', connect);
-                </script>
-            </body>
-            </html>""".replace("{port}", str(self.port))
-            
-            # Send HTTP response
-            response = (
-                "HTTP/1.1 200 OK\r\n"
-                "Content-Type: text/html\r\n"
-                f"Content-Length: {len(html)}\r\n"
-                "Connection: close\r\n"
-                "\r\n"
-                f"{html}"
-            )
-            client_socket.send(response.encode())
+            print(f"{Fore.RED}Unexpected error in client handler for {addr}: {e}")
         
-        except Exception as e:
-            print(f"{Fore.RED}Error handling HTTP request: {e}")
+        finally:
+            # Remove client from clients list
+            with self.clients_lock:
+                if client_socket in self.clients:
+                    del self.clients[client_socket]
+            
             try:
-                # Send a simple error response
-                error_response = (
-                    "HTTP/1.1 500 Internal Server Error\r\n"
-                    "Content-Type: text/plain\r\n"
-                    "Connection: close\r\n"
-                    "\r\n"
-                    f"Error: {str(e)}"
-                )
-                client_socket.send(error_response.encode())
+                client_socket.close()
             except:
                 pass
+            
+            print(f"{Fore.YELLOW}Spectator disconnected: {addr}")
     
-    def _send_welcome_message(self, client_socket):
-        """Send a welcome message to a newly connected client"""
+    def _handle_handshake(self, client_socket):
+        """Handle WebSocket handshake"""
         try:
-            # Check if this is a WebSocket client
-            if client_socket in self.client_info and self.client_info[client_socket].get("is_websocket", False):
-                # Send welcome message as JSON
-                welcome_message = {
-                    'type': 'welcome',
-                    'data': {
-                        'message': 'Welcome to DuelSim Spectator Mode!',
-                        'server_time': time.time(),
-                        'server_version': '1.0.0',
-                        'connected_clients': len(self.clients)
-                    }
-                }
-                self._send_websocket_message(client_socket, json.dumps(welcome_message))
-            else:
-                # Send plain text welcome message
-                welcome_message = "Welcome to DuelSim Spectator Mode! Type /help for available commands."
-                client_socket.send((welcome_message + '\n').encode('utf-8'))
-        except Exception as e:
-            print(f"{Fore.RED}Error sending welcome message: {e}")
-    
-    def _send_battle_info(self, client_socket):
-        """Send battle information to a client"""
-        if not self.battle_data:
-            self._send_to_client(client_socket, json.dumps({
-                'type': 'error',
-                'data': {'message': 'No battle in progress'}
-            }))
-            return
+            # Receive HTTP request
+            data = client_socket.recv(4096).decode('utf-8')
+            
+            # Check if it's a valid WebSocket handshake request
+            if "Upgrade: websocket" not in data:
+                print(f"{Fore.RED}Not a WebSocket handshake request")
+                return False
+            
+            # Extract the Sec-WebSocket-Key
+            key = re.search(r'Sec-WebSocket-Key: (.*)\r\n', data)
+            if not key:
+                print(f"{Fore.RED}No Sec-WebSocket-Key found")
+                return False
+            
+            key = key.group(1).strip()
+            
+            # Create the response key
+            response_key = self._generate_handshake_key(key)
+            
+            # Create handshake response
+            handshake = (
+                "HTTP/1.1 101 Switching Protocols\r\n"
+                "Upgrade: websocket\r\n"
+                "Connection: Upgrade\r\n"
+                f"Sec-WebSocket-Accept: {response_key}\r\n"
+                "\r\n"
+            )
+            
+            # Send handshake response
+            client_socket.sendall(handshake.encode('utf-8'))
+            
+            return True
         
-        # Extract relevant battle info
-        battle_info = {
-            'players': [
-                {
-                    'name': self.battle_data['players'][0]['name'],
-                    'hp': self.battle_data['players'][0]['hp'],
-                    'max_hp': self.battle_data['players'][0]['max_hp'],
-                    'position': self.battle_data['players'][0]['position']
-                },
-                {
-                    'name': self.battle_data['players'][1]['name'],
-                    'hp': self.battle_data['players'][1]['hp'],
-                    'max_hp': self.battle_data['players'][1]['max_hp'],
-                    'position': self.battle_data['players'][1]['position']
-                }
-            ],
-            'arena_size': self.battle_data.get('arena_size', {'width': 5, 'height': 5}),
-            'current_tick': self.current_tick,
-            'max_ticks': self.battle_data.get('max_ticks', 150)
-        }
+        except Exception as e:
+            print(f"{Fore.RED}Error in handshake: {e}")
+            return False
+    
+    def _generate_handshake_key(self, key):
+        """Generate the handshake response key"""
+        GUID = "258EAFA5-E914-47DA-95CA-C5AB0DC85B11"
+        hash_key = key + GUID
+        sha1 = hashlib.sha1(hash_key.encode('utf-8')).digest()
+        return base64.b64encode(sha1).decode('utf-8')
+    
+    def _decode_frame(self, buffer):
+        """Decode a WebSocket frame"""
+        if len(buffer) < 2:
+            return False, 0, None
         
-        self._send_to_client(client_socket, json.dumps({
-            'type': 'battle_info',
-            'data': battle_info
-        }))
+        # Get the first byte
+        b1 = buffer[0]
+        fin = (b1 & 0x80) != 0
+        opcode = b1 & 0x0F
+        
+        # Get the second byte
+        b2 = buffer[1]
+        mask = (b2 & 0x80) != 0
+        payload_len = b2 & 0x7F
+        
+        # Determine the header length
+        header_len = 2
+        if payload_len == 126:
+            if len(buffer) < 4:
+                return False, 0, None
+            payload_len = struct.unpack(">H", buffer[2:4])[0]
+            header_len = 4
+        elif payload_len == 127:
+            if len(buffer) < 10:
+                return False, 0, None
+            payload_len = struct.unpack(">Q", buffer[2:10])[0]
+            header_len = 10
+        
+        # Check if we have enough data
+        if mask:
+            if len(buffer) < header_len + 4:
+                return False, 0, None
+            mask_key = buffer[header_len:header_len+4]
+            header_len += 4
+        
+        # Check if we have the full frame
+        if len(buffer) < header_len + payload_len:
+            return False, 0, None
+        
+        # Extract the payload
+        payload = buffer[header_len:header_len+payload_len]
+        
+        # Unmask the payload if needed
+        if mask:
+            payload = bytearray(payload)
+            for i in range(len(payload)):
+                payload[i] ^= mask_key[i % 4]
+        
+        # Handle different opcodes
+        if opcode == 0x8:  # Close
+            return 'close', header_len + payload_len, None
+        elif opcode == 0x9:  # Ping
+            return 'ping', header_len + payload_len, payload
+        elif opcode == 0xA:  # Pong
+            return 'pong', header_len + payload_len, payload
+        elif opcode == 0x1:  # Text
+            return 'text', header_len + payload_len, payload.decode('utf-8')
+        elif opcode == 0x2:  # Binary
+            return 'binary', header_len + payload_len, payload
+        else:
+            return 'unknown', header_len + payload_len, payload
     
-    def _send_to_client(self, client_socket, message):
-        """Send a message to a specific client"""
+    def _send_message(self, client_socket, message):
+        """Send a text message to a client"""
+        if isinstance(message, str):
+            message = message.encode('utf-8')
+        
+        # Create frame header
+        header = bytearray()
+        
+        # Set fin and opcode (0x01 for text)
+        header.append(0x81)
+        
+        # Set payload length
+        if len(message) < 126:
+            header.append(len(message))
+        elif len(message) < 65536:
+            header.append(126)
+            header.extend(struct.pack(">H", len(message)))
+        else:
+            header.append(127)
+            header.extend(struct.pack(">Q", len(message)))
+        
+        # Send the frame
         try:
-            # Check if this is a WebSocket client
-            if client_socket in self.client_info and self.client_info[client_socket].get("is_websocket", False):
-                self._send_websocket_message(client_socket, message)
-            else:
-                client_socket.send((message + '\n').encode('utf-8'))
+            client_socket.sendall(header + message)
+            return True
         except Exception as e:
-            print(f"{Fore.RED}Error sending to client: {e}")
-            # Remove client on error
-            self._remove_client(client_socket, [self.server_socket] + self.clients)
+            print(f"{Fore.RED}Error sending message: {e}")
+            return False
     
-    def _send_websocket_message(self, client_socket, message):
-        """Send a message to a WebSocket client"""
+    def _send_ping_frame(self, client_socket):
+        """Send a ping frame to a client"""
         try:
-            # Prepare the WebSocket frame
-            # Text frame, FIN bit set
-            frame = bytearray([0x81])
-            
-            # Set payload length
-            payload_bytes = message.encode('utf-8')
-            payload_length = len(payload_bytes)
-            
-            if payload_length < 126:
-                frame.append(payload_length)
-            elif payload_length < 65536:
-                frame.append(126)
-                frame.extend(payload_length.to_bytes(2, byteorder='big'))
-            else:
-                frame.append(127)
-                frame.extend(payload_length.to_bytes(8, byteorder='big'))
-            
-            # Add payload
-            frame.extend(payload_bytes)
-            
-            # Send the frame
-            client_socket.send(frame)
+            # Simple ping frame (FIN=1, Opcode=9, Length=0)
+            client_socket.sendall(b'\x89\x00')
+            return True
         except Exception as e:
-            print(f"{Fore.RED}Error sending WebSocket message: {e}")
-            self._remove_client(client_socket, [self.server_socket] + self.clients)
+            print(f"{Fore.RED}Error sending ping: {e}")
+            return False
     
-    def _send_battle_info_ws(self, client_socket):
-        """Send battle information to a WebSocket client"""
+    def _send_pong_frame(self, client_socket, payload=b''):
+        """Send a pong frame to a client"""
         try:
-            if not self.battle_data:
-                return
-            
-            # Create a message with the battle data
-            message = {
-                'type': 'battle_info',
-                'data': self.battle_data
-            }
-            
-            # Send as WebSocket message
-            self._send_websocket_message(client_socket, json.dumps(message))
+            # Simple pong frame (FIN=1, Opcode=10, Length=len(payload))
+            header = bytearray([0x8A, len(payload)])
+            client_socket.sendall(header + payload)
+            return True
         except Exception as e:
-            print(f"{Fore.RED}Error sending battle info via WebSocket: {e}")
+            print(f"{Fore.RED}Error sending pong: {e}")
+            return False
+    
+    def _send_close_frame(self, client_socket):
+        """Send a close frame to a client"""
+        try:
+            # Simple close frame (FIN=1, Opcode=8, Length=2, Status=1000)
+            client_socket.sendall(b'\x88\x02\x03\xe8')
+            return True
+        except Exception as e:
+            print(f"{Fore.RED}Error sending close frame: {e}")
+            return False
+    
+    def _send_keep_alive(self):
+        """Send periodic ping frames to keep connections alive"""
+        while self.running:
+            try:
+                with self.clients_lock:
+                    current_time = time.time()
+                    clients_to_remove = []
+                    
+                    for client_socket, client_info in list(self.clients.items()):
+                        # Check if client hasn't responded to pings for too long
+                        if current_time - client_info['last_ping'] > self.ping_interval * 2:
+                            print(f"{Fore.YELLOW}Client {client_info['address']} timed out, removing")
+                            clients_to_remove.append(client_socket)
+                            continue
+                        
+                        # Send ping to client
+                        if current_time - client_info['last_ping'] > self.ping_interval:
+                            if not self._send_ping_frame(client_socket):
+                                clients_to_remove.append(client_socket)
+                    
+                    # Remove disconnected clients
+                    for client_socket in clients_to_remove:
+                        try:
+                            client_socket.close()
+                        except:
+                            pass
+                        if client_socket in self.clients:
+                            del self.clients[client_socket]
+            
+            except Exception as e:
+                print(f"{Fore.RED}Error in keep-alive thread: {e}")
+            
+            # Sleep until next ping interval
+            time.sleep(self.ping_interval / 2)
     
     def broadcast(self, message):
         """Broadcast a message to all connected clients"""
-        # Make a copy of the clients list to avoid modification during iteration
-        clients_copy = self.clients.copy()
-        
-        for client in clients_copy:
-            try:
-                # Check if the socket is still valid
-                if client.fileno() < 0:
-                    self._remove_client(client, None)
-                    continue
-                
-                # Send the message
-                if isinstance(message, str):
-                    # For text messages
-                    if self._is_websocket(client):
-                        self._send_websocket_message(client, message)
-                    else:
-                        client.send((message + '\n').encode('utf-8'))
-                else:
-                    # For binary messages
-                    client.send(message)
-            except Exception as e:
-                print(f"{Fore.RED}Error broadcasting to client: {e}")
-                self._remove_client(client, None)
-    
-    def _process_event_queue(self):
-        """Process events in the queue safely"""
-        try:
-            # Process a limited number of events per cycle to prevent blocking
-            max_events_per_cycle = 10
-            events_processed = 0
+        with self.clients_lock:
+            clients_to_remove = []
+            client_count = len(self.clients)
+            success_count = 0
             
-            while not self.event_queue.empty() and events_processed < max_events_per_cycle:
+            for client_socket, client_info in list(self.clients.items()):
+                if self._send_message(client_socket, message):
+                    success_count += 1
+                else:
+                    clients_to_remove.append(client_socket)
+            
+            # Remove disconnected clients
+            for client_socket in clients_to_remove:
                 try:
-                    event = self.event_queue.get(block=False)
-                    
-                    # Increment tick counter for certain events
-                    if event.get('type') in ['attack', 'movement', 'special']:
-                        self.current_tick += 1
-                    
-                    # Broadcast the event
-                    self.broadcast(json.dumps({
-                        'type': 'event',
-                        'data': event
-                    }))
-                    
-                    events_processed += 1
-                    
-                    # Small delay to prevent flooding clients
-                    time.sleep(0.05)
-                except queue.Empty:
-                    break
-        except Exception as e:
-            print(f"{Fore.RED}Error processing event queue: {e}")
+                    client_socket.close()
+                except:
+                    pass
+                if client_socket in self.clients:
+                    del self.clients[client_socket]
+            
+            if client_count > 0:
+                print(f"{Fore.CYAN}Broadcast message to {success_count}/{client_count} clients")
     
     def set_battle_data(self, battle_data):
-        """Set the current battle data and notify clients"""
+        """Set the current battle data and broadcast to clients"""
         self.battle_data = battle_data
-        self.current_tick = 0
+        print(f"{Fore.CYAN}Battle data set: {battle_data['players'][0]['name']} vs {battle_data['players'][1]['name']}")
         
         # Broadcast battle info to all clients
         self.broadcast(json.dumps({
             'type': 'battle_info',
             'data': battle_data
         }))
-        
-        print(f"{Fore.GREEN}Battle data set: {battle_data['players'][0]['name']} vs {battle_data['players'][1]['name']}")
     
     def add_event(self, event):
-        """Add an event to the queue for broadcasting"""
-        # Update player state based on event
-        if event.get('type') == 'attack':
-            # Update HP for the target player
-            target = event.get('target')
-            damage = event.get('damage', 0)
-            
-            for player in self.battle_data['players']:
-                if player['name'] == target:
-                    player['hp'] = max(0, player['hp'] - damage)
-        
-        elif event.get('type') == 'movement':
-            # Update position for the moving player
-            actor = event.get('actor')
-            to_position = event.get('to_position')
-            
-            if actor and to_position:
-                for player in self.battle_data['players']:
-                    if player['name'] == actor:
-                        player['position'] = to_position
-        
-        # Add event to queue
-        self.event_queue.put(event)
-        
-        # Increment tick counter for certain events
-        if event.get('type') in ['attack', 'movement', 'special']:
-            self.current_tick += 1
+        """Add an event to the battle and broadcast it"""
+        self.broadcast(json.dumps({
+            'type': 'event',
+            'data': event
+        }))
 
-    def _decode_websocket_frame(self, data, client_socket=None):
-        """Decode a WebSocket frame and return the message"""
-        try:
-            # Basic WebSocket frame decoding
-            if len(data) < 2:
-                return None
-            
-            # Check FIN bit and opcode
-            fin = (data[0] & 0x80) != 0
-            opcode = data[0] & 0x0F
-            
-            # Handle different opcodes
-            if opcode == 0x8:  # Close frame
-                return None
-            elif opcode == 0x9 and client_socket:  # Ping frame
-                # Send pong frame
-                self._send_websocket_pong(client_socket)
-                return None
-            elif opcode not in [0x1, 0x0]:  # Not a text or continuation frame
-                return None
-            
-            # Get payload length
-            mask = (data[1] & 0x80) != 0
-            payload_length = data[1] & 0x7F
-            
-            # Determine header length
-            header_length = 2
-            if payload_length == 126:
-                header_length += 2
-                payload_length = int.from_bytes(data[2:4], byteorder='big')
-            elif payload_length == 127:
-                header_length += 8
-                payload_length = int.from_bytes(data[2:10], byteorder='big')
-            
-            # Get masking key if present
-            masking_key = None
-            if mask:
-                masking_key = data[header_length:header_length+4]
-                header_length += 4
-            
-            # Get payload
-            payload = data[header_length:header_length+payload_length]
-            
-            # Unmask payload if needed
-            if mask and masking_key:
-                unmasked = bytearray(payload_length)
-                for i in range(payload_length):
-                    unmasked[i] = payload[i] ^ masking_key[i % 4]
-                payload = unmasked
-            
-            # Return decoded message
-            return payload.decode('utf-8')
-        
-        except Exception as e:
-            print(f"{Fore.RED}Error decoding WebSocket frame: {e}")
-            return None
 
-    def _send_websocket_pong(self, client_socket):
-        """Send a WebSocket pong frame"""
-        try:
-            # Create pong frame (opcode 0xA)
-            pong_frame = bytearray([0x8A, 0x00])
-            client_socket.send(pong_frame)
-        except Exception as e:
-            print(f"{Fore.RED}Error sending WebSocket pong: {e}")
+# For backward compatibility, create a SpectatorServer class that inherits from WebSocketServer
+class SpectatorServer(WebSocketServer):
+    """Server that broadcasts duel events to connected spectators"""
+    
+    def __init__(self, port=5556):
+        super().__init__(port=port)
+        
+        # Initialize betting manager (placeholder)
+        class DummyBettingManager:
+            def place_bet(self, *args, **kwargs):
+                return {"success": False, "error": "Betting not implemented"}
+            
+            def get_user_balance(self, *args, **kwargs):
+                return 0
+            
+            def get_user_bets(self, *args, **kwargs):
+                return []
+            
+            def settle_duel(self, *args, **kwargs):
+                return {"success": False, "error": "Betting not implemented"}
+        
+        class DummyBettingIntegration:
+            def __init__(self, server, manager):
+                self.spectator_server = server
+                self.betting_manager = manager
+                self.current_duel_id = None
+                self.current_pool = None
+            
+            def lock_betting(self):
+                pass
+            
+            def settle_duel(self, winner_name):
+                pass
+        
+        self.betting_manager = DummyBettingManager()
+        self.betting_integration = DummyBettingIntegration(self, self.betting_manager)
 
 class SpectatorClient:
     """Client for connecting to a spectator server"""

@@ -15,6 +15,7 @@ import argparse
 import socket
 import json
 from pathlib import Path
+import re
 
 # Add the project root to the Python path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -28,21 +29,44 @@ DEFAULT_HTTP_PORT = 8080
 DEFAULT_SPECTATOR_PORT = 5556
 
 class DuelSimHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
-    """Custom HTTP request handler for DuelSim"""
+    """HTTP request handler for DuelSim"""
     
     def __init__(self, *args, duel_manager=None, **kwargs):
         self.duel_manager = duel_manager
-        super().__init__(*args, directory=os.path.dirname(os.path.abspath(__file__)), **kwargs)
+        super().__init__(*args, **kwargs)
     
     def do_GET(self):
         """Handle GET requests"""
-        # Serve the spectator.html file as the default page
+        # Special paths
         if self.path == '/':
-            self.path = '/spectator.html'
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            
+            # Serve the simple client as the default
+            with open('simple_client.html', 'rb') as f:
+                self.wfile.write(f.read())
+            return
         
-        # Serve the websocket test page
+        elif self.path == '/client':
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            
+            # Serve the web client
+            with open('web_client.html', 'rb') as f:
+                self.wfile.write(f.read())
+            return
+        
         elif self.path == '/test':
-            self.path = '/websocket_test.html'
+            self.send_response(200)
+            self.send_header('Content-type', 'text/html')
+            self.end_headers()
+            
+            # Serve the WebSocket test page
+            with open('websocket_test.html', 'rb') as f:
+                self.wfile.write(f.read())
+            return
         
         # API endpoint to start a duel
         elif self.path.startswith('/api/start-duel'):
@@ -51,15 +75,40 @@ class DuelSimHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         
         # API endpoint to get duel status
         elif self.path == '/api/duel-status':
-            self._handle_duel_status()
+            if not self.duel_manager:
+                self._send_json_response(500, {"error": "Duel manager not available"})
+                return
+            
+            # Get current duel status
+            current_duel = self.duel_manager.current_duel
+            queue_size = self.duel_manager.duel_queue.qsize()
+            
+            # Send response
+            self._send_json_response(200, {
+                "current_duel": current_duel,
+                "queue_size": queue_size
+            })
             return
         
         return super().do_GET()
     
+    def do_POST(self):
+        """Handle POST requests"""
+        # Start duel endpoint
+        if self.path == '/start-duel':
+            self._handle_start_duel_post()
+            return
+        
+        # Default response for unsupported POST endpoints
+        self.send_response(404)
+        self.send_header('Content-Type', 'text/plain')
+        self.end_headers()
+        self.wfile.write(b'Not Found')
+    
     def _handle_start_duel(self):
         """Handle a request to start a duel"""
         if not self.duel_manager:
-            self._send_json_response({"error": "Duel manager not available"}, 500)
+            self._send_json_response(500, {"error": "Duel manager not available"})
             return
         
         # Parse query parameters
@@ -89,7 +138,7 @@ class DuelSimHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
         )
         
         # Send response
-        self._send_json_response({
+        self._send_json_response(200, {
             "status": "queued",
             "duel": {
                 "player1": duel_config['player1_name'],
@@ -98,25 +147,38 @@ class DuelSimHTTPRequestHandler(http.server.SimpleHTTPRequestHandler):
             }
         })
     
-    def _handle_duel_status(self):
-        """Handle a request to get duel status"""
+    def _handle_start_duel_post(self):
+        """Handle POST request to start a duel"""
         if not self.duel_manager:
-            self._send_json_response({"error": "Duel manager not available"}, 500)
+            self._send_json_response(400, {'error': 'Duel manager not available'})
             return
         
-        # Get current duel status
-        current_duel = self.duel_manager.current_duel
-        queue_size = self.duel_manager.duel_queue.qsize()
+        try:
+            # Get random fighters for the duel
+            fighters = self.duel_manager.get_random_fighters(2)
+            if len(fighters) < 2:
+                self._send_json_response(500, {'error': 'Not enough fighters available'})
+                return
+            
+            # Start the duel
+            duel_id = self.duel_manager.queue_duel(fighters[0], fighters[1])
+            
+            # Start the duel immediately
+            self.duel_manager.start_next_duel()
+            
+            # Send success response
+            self._send_json_response(200, {
+                'status': 'success',
+                'message': f'Duel queued: {fighters[0]} vs {fighters[1]}',
+                'duel_id': duel_id
+            })
         
-        # Send response
-        self._send_json_response({
-            "current_duel": current_duel,
-            "queue_size": queue_size
-        })
+        except Exception as e:
+            self._send_json_response(500, {'error': str(e)})
     
-    def _send_json_response(self, data, status=200):
+    def _send_json_response(self, status_code, data):
         """Send a JSON response"""
-        self.send_response(status)
+        self.send_response(status_code)
         self.send_header('Content-Type', 'application/json')
         self.end_headers()
         
@@ -164,11 +226,12 @@ def start_http_server(port=DEFAULT_HTTP_PORT, spectator_port=DEFAULT_SPECTATOR_P
     try:
         with socketserver.TCPServer(("", port), handler) as httpd:
             print(f"\033[92m[Web Server]\033[0m Server started at http://localhost:{port}")
+            print(f"\033[92m[Web Server]\033[0m Use http://localhost:{port}/client for the web client")
             print(f"\033[92m[Web Server]\033[0m Use http://localhost:{port}/test for WebSocket testing")
             print(f"\033[92m[Web Server]\033[0m WebSocket server running on port {spectator_port}")
             
-            # Open the browser automatically
-            webbrowser.open(f"http://localhost:{port}")
+            # Open the browser automatically to the web client
+            webbrowser.open(f"http://localhost:{port}/client")
             
             # Update the WebSocket URL in the HTML files
             update_websocket_url(spectator_port)
@@ -191,11 +254,10 @@ def update_websocket_url(port):
         with open('spectator.html', 'r') as f:
             content = f.read()
         
-        # Replace the WebSocket URL
-        content = content.replace('const SERVER_URL = `ws://${window.location.hostname}:5555`;', 
-                                 f'const SERVER_URL = `ws://${{window.location.hostname}}:{port}`;')
-        content = content.replace('const SERVER_URL = `ws://${window.location.hostname}:5556`;', 
-                                 f'const SERVER_URL = `ws://${{window.location.hostname}}:{port}`;')
+        # Replace the WebSocket URL with a more robust pattern
+        pattern = r'const SERVER_URL = `ws://\$\{window\.location\.hostname\}:\d+`;'
+        replacement = f'const SERVER_URL = `ws://${{window.location.hostname}}:{port}`;'
+        content = re.sub(pattern, replacement, content)
         
         with open('spectator.html', 'w') as f:
             f.write(content)
@@ -204,15 +266,15 @@ def update_websocket_url(port):
         with open('websocket_test.html', 'r') as f:
             content = f.read()
         
-        # Replace the WebSocket URL
-        content = content.replace('socket = new WebSocket(`ws://${window.location.hostname}:5555`);', 
-                                 f'socket = new WebSocket(`ws://${{window.location.hostname}}:{port}`);')
-        content = content.replace('socket = new WebSocket(`ws://${window.location.hostname}:5556`);', 
-                                 f'socket = new WebSocket(`ws://${{window.location.hostname}}:{port}`);')
+        # Replace the WebSocket URL with a more robust pattern
+        pattern = r'socket = new WebSocket\(`ws://\$\{window\.location\.hostname\}:\d+`\);'
+        replacement = f'socket = new WebSocket(`ws://${{window.location.hostname}}:{port}`);'
+        content = re.sub(pattern, replacement, content)
         
         with open('websocket_test.html', 'w') as f:
             f.write(content)
             
+        print(f"\033[92m[Web Server]\033[0m Updated WebSocket URLs to use port {port}")
     except Exception as e:
         print(f"\033[93m[Web Server]\033[0m Warning: Could not update WebSocket URLs: {e}")
 

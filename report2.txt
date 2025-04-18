@@ -1,0 +1,48 @@
+# Current Status of DuelSim Project
+
+Looking at the code and the duel report you shared, I can see that your DuelSim project has made significant progress. Let's analyze the current state, successes, and issues:
+
+## Successes
+
+1. **Core Duel Simulation**: The battle engine is working well, as evidenced by the duel report showing a complete battle between "0xEC" and "noLE" with detailed statistics.
+
+2. **Reporting System**: You have a nice reporting system that generates detailed battle narratives with statistics, damage dealt, critical hits, etc.
+
+3. **Spectator Mode Framework**: You've implemented a spectator server that can broadcast duel events to connected clients.
+
+4. **Web Interface**: You have HTML/JavaScript code for a web-based spectator interface.
+
+5. **Betting System Integration**: You've started implementing a betting system that integrates with the spectator mode.
+
+## Current Issues
+
+1. **WebSocket Connection Problems**: It appears that the WebSocket connection between the browser and the spectator server isn't working correctly. This is likely due to:
+   - Inconsistent port usage (5555, 5556, 5557) across different files
+   - Possible issues with the WebSocket handshake implementation
+   - HTML template issues in the `_handle_http_request` method
+
+2. **HTML Template Error**: The line `html = """<!DOCTYPE html>...`.replace` is missing parentheses, which would cause a syntax error.
+
+3. **Client Information Handling**: There might be issues with how client information is stored and updated when clients connect.
+
+## Next Steps for Debugging
+
+1. **Fix the HTML Template**: The most immediate issue is the syntax error in the HTML template:
+
+```python
+# Change this line:
+html = """<!DOCTYPE html>...</html>""".replace
+
+# To:
+html = """<!DOCTYPE html>...</html>""".replace("{port}", str(self.port))
+```
+
+2. **Standardize Port Usage**: Make sure all references to WebSocket ports are consistent across files.
+
+3. **Test with Simple WebSocket Client**: Use the `websocket_test.html` file to test basic WebSocket connectivity before trying the full spectator interface.
+
+4. **Check Server Logs**: When running the server, look for any error messages related to WebSocket connections or HTTP requests.
+
+5. **Verify WebSocket Handshake**: Make sure the WebSocket handshake is being performed correctly in the `_handle_http_request` method.
+
+Would you like me to help with any specific part of the debugging process?

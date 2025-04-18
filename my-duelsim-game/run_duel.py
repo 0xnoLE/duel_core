@@ -28,7 +28,7 @@ def generate_random_name():
     suffixes = ["Blade", "Fist", "Knight", "Warrior", "Mage", "Hunter", "Slayer", "Master", "Lord", "Champion"]
     return f"{random.choice(prefixes)}{random.choice(suffixes)}"
 
-def run_duel(player1_name=None, player2_name=None, spectator_port=5555, max_ticks=150, 
+def run_duel(player1_name=None, player2_name=None, spectator_port=5556, max_ticks=150, 
              tick_duration=500, auto_start=False):
     """Run a duel with the specified parameters"""
     # Use random names if not provided

@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DuelSim WebSocket Debugger</title>
+    <style>
+        body {
+            font-family: monospace;
+            margin: 20px;
+            background-color: #f0f0f0;
+        }
+        #container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        #log {
+            height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        .info { color: blue; }
+        .error { color: red; }
+        .success { color: green; }
+        .received { color: purple; }
+        button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+        input[type="text"] {
+            padding: 8px;
+            width: 300px;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>DuelSim WebSocket Debugger</h1>
+        
+        <div class="controls">
+            <div>
+                <label for="wsUrl">WebSocket URL:</label>
+                <input type="text" id="wsUrl" value="ws://localhost:5556" />
+            </div>
+            <div style="margin-top: 10px;">
+                <button id="connectBtn">Connect</button>
+                <button id="disconnectBtn" disabled>Disconnect</button>
+            </div>
+        </div>
+        
+        <div class="controls">
+            <div>
+                <label for="message">Message:</label>
+                <input type="text" id="message" value="/info" />
+            </div>
+            <div style="margin-top: 10px;">
+                <button id="sendBtn" disabled>Send Message</button>
+                <button id="requestInfoBtn" disabled>Request Battle Info</button>
+                <button id="startDuelBtn" disabled>Start Duel</button>
+            </div>
+        </div>
+        
+        <div id="log"></div>
+    </div>
+    
+    <script>
+        // DOM elements
+        const wsUrlInput = document.getElementById('wsUrl');
+        const messageInput = document.getElementById('message');
+        const connectBtn = document.getElementById('connectBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const sendBtn = document.getElementById('sendBtn');
+        const requestInfoBtn = document.getElementById('requestInfoBtn');
+        const startDuelBtn = document.getElementById('startDuelBtn');
+        const logDiv = document.getElementById('log');
+        
+        // WebSocket connection
+        let socket = null;
+        
+        // Log a message to the log div
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(div);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        // Connect to WebSocket server
+        function connect() {
+            const url = wsUrlInput.value;
+            
+            log(`Connecting to ${url}...`);
+            
+            try {
+                socket = new WebSocket(url);
+                
+                socket.onopen = function() {
+                    log('Connection established', 'success');
+                    connectBtn.disabled = true;
+                    disconnectBtn.disabled = false;
+                    sendBtn.disabled = false;
+                    requestInfoBtn.disabled = false;
+                    startDuelBtn.disabled = false;
+                };
+                
+                socket.onclose = function(event) {
+                    log(`Connection closed (code: ${event.code})`, 'info');
+                    connectBtn.disabled = false;
+                    disconnectBtn.disabled = true;
+                    sendBtn.disabled = true;
+                    requestInfoBtn.disabled = true;
+                    startDuelBtn.disabled = true;
+                    socket = null;
+                };
+                
+                socket.onerror = function(error) {
+                    log(`WebSocket error: ${error}`, 'error');
+                };
+                
+                socket.onmessage = function(event) {
+                    try {
+                        // Try to parse as JSON
+                        const data = JSON.parse(event.data);
+                        log(`Received: ${JSON.stringify(data, null, 2)}`, 'received');
+                    } catch (e) {
+                        // Not JSON, just log the raw data
+                        log(`Received: ${event.data}`, 'received');
+                    }
+                };
+            } catch (error) {
+                log(`Failed to connect: ${error.message}`, 'error');
+            }
+        }
+        
+        // Disconnect from WebSocket server
+        function disconnect() {
+            if (socket) {
+                log('Disconnecting...', 'info');
+                socket.close();
+            }
+        }
+        
+        // Send a message to the server
+        function sendMessage() {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                const message = messageInput.value;
+                log(`Sending: ${message}`, 'info');
+                socket.send(message);
+            } else {
+                log('Not connected to server', 'error');
+            }
+        }
+        
+        // Request battle info
+        function requestInfo() {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                log('Requesting battle info', 'info');
+                socket.send('/info');
+            } else {
+                log('Not connected to server', 'error');
+            }
+        }
+        
+        // Start a new duel
+        function startDuel() {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                log('Requesting to start a new duel', 'info');
+                socket.send('/start-duel');
+            } else {
+                log('Not connected to server', 'error');
+            }
+        }
+        
+        // Event listeners
+        connectBtn.addEventListener('click', connect);
+        disconnectBtn.addEventListener('click', disconnect);
+        sendBtn.addEventListener('click', sendMessage);
+        requestInfoBtn.addEventListener('click', requestInfo);
+        startDuelBtn.addEventListener('click', startDuel);
+    </script>
+</body>
+</html> 
