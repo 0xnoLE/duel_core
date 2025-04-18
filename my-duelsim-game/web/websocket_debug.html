@@ -1,92 +1,58 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>DuelSim WebSocket Debugger</title>
+    <title>WebSocket Debug</title>
     <style>
         body {
-            font-family: monospace;
+            font-family: Arial, sans-serif;
             margin: 20px;
-            background-color: #f0f0f0;
-        }
-        #container {
-            max-width: 800px;
-            margin: 0 auto;
-            background-color: white;
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         #log {
-            height: 300px;
-            overflow-y: auto;
             border: 1px solid #ccc;
             padding: 10px;
+            height: 300px;
+            overflow-y: auto;
             margin-bottom: 10px;
-            background-color: #f9f9f9;
+            font-family: monospace;
         }
-        .controls {
-            margin-bottom: 20px;
-        }
-        .info { color: blue; }
         .error { color: red; }
         .success { color: green; }
-        .received { color: purple; }
+        .info { color: blue; }
         button {
-            padding: 8px 16px;
-            margin-right: 10px;
-            cursor: pointer;
-        }
-        input[type="text"] {
-            padding: 8px;
-            width: 300px;
+            padding: 5px 10px;
+            margin-right: 5px;
         }
     </style>
 </head>
 <body>
-    <div id="container">
-        <h1>DuelSim WebSocket Debugger</h1>
-        
-        <div class="controls">
-            <div>
-                <label for="wsUrl">WebSocket URL:</label>
-                <input type="text" id="wsUrl" value="ws://localhost:5556" />
-            </div>
-            <div style="margin-top: 10px;">
-                <button id="connectBtn">Connect</button>
-                <button id="disconnectBtn" disabled>Disconnect</button>
-            </div>
-        </div>
-        
-        <div class="controls">
-            <div>
-                <label for="message">Message:</label>
-                <input type="text" id="message" value="/info" />
-            </div>
-            <div style="margin-top: 10px;">
-                <button id="sendBtn" disabled>Send Message</button>
-                <button id="requestInfoBtn" disabled>Request Battle Info</button>
-                <button id="startDuelBtn" disabled>Start Duel</button>
-            </div>
-        </div>
-        
-        <div id="log"></div>
+    <h1>WebSocket Debug</h1>
+    
+    <div>
+        <button id="connect">Connect</button>
+        <button id="disconnect" disabled>Disconnect</button>
+        <input type="text" id="port" value="5556" size="5"> Port
+    </div>
+    
+    <div id="log"></div>
+    
+    <div>
+        <input type="text" id="message" placeholder="Message to send" style="width: 300px;">
+        <button id="send" disabled>Send</button>
     </div>
     
     <script>
-        // DOM elements
-        const wsUrlInput = document.getElementById('wsUrl');
+        const connectBtn = document.getElementById('connect');
+        const disconnectBtn = document.getElementById('disconnect');
+        const sendBtn = document.getElementById('send');
+        const portInput = document.getElementById('port');
         const messageInput = document.getElementById('message');
-        const connectBtn = document.getElementById('connectBtn');
-        const disconnectBtn = document.getElementById('disconnectBtn');
-        const sendBtn = document.getElementById('sendBtn');
-        const requestInfoBtn = document.getElementById('requestInfoBtn');
-        const startDuelBtn = document.getElementById('startDuelBtn');
         const logDiv = document.getElementById('log');
         
-        // WebSocket connection
         let socket = null;
+        let reconnectTimer = null;
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 5;
         
-        // Log a message to the log div
         function log(message, type = 'info') {
             const div = document.createElement('div');
             div.className = type;
@@ -95,98 +61,93 @@
             logDiv.scrollTop = logDiv.scrollHeight;
         }
         
-        // Connect to WebSocket server
         function connect() {
-            const url = wsUrlInput.value;
-            
-            log(`Connecting to ${url}...`);
+            const port = portInput.value || '5556';
             
             try {
-                socket = new WebSocket(url);
+                log(`Connecting to ws://${window.location.hostname}:${port}...`);
+                socket = new WebSocket(`ws://${window.location.hostname}:${port}`);
                 
-                socket.onopen = function() {
-                    log('Connection established', 'success');
+                socket.onopen = () => {
+                    log('Connected!', 'success');
                     connectBtn.disabled = true;
                     disconnectBtn.disabled = false;
                     sendBtn.disabled = false;
-                    requestInfoBtn.disabled = false;
-                    startDuelBtn.disabled = false;
+                    reconnectAttempts = 0;
                 };
                 
-                socket.onclose = function(event) {
-                    log(`Connection closed (code: ${event.code})`, 'info');
+                socket.onclose = (event) => {
+                    log(`Disconnected (code: ${event.code}, reason: ${event.reason || 'none'})`, 'error');
                     connectBtn.disabled = false;
                     disconnectBtn.disabled = true;
                     sendBtn.disabled = true;
-                    requestInfoBtn.disabled = true;
-                    startDuelBtn.disabled = true;
                     socket = null;
+                    
+                    // Auto-reconnect if not manually disconnected
+                    if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                        reconnectAttempts++;
+                        const delay = 3000 * Math.min(reconnectAttempts, 3);
+                        log(`Attempting to reconnect in ${delay/1000} seconds... (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`);
+                        reconnectTimer = setTimeout(connect, delay);
+                    }
                 };
                 
-                socket.onerror = function(error) {
-                    log(`WebSocket error: ${error}`, 'error');
+                socket.onerror = (error) => {
+                    log(`Error: ${error.message || 'Unknown error'}`, 'error');
                 };
                 
-                socket.onmessage = function(event) {
+                socket.onmessage = (event) => {
                     try {
                         // Try to parse as JSON
                         const data = JSON.parse(event.data);
-                        log(`Received: ${JSON.stringify(data, null, 2)}`, 'received');
+                        log(`Received: ${JSON.stringify(data, null, 2)}`, 'info');
                     } catch (e) {
-                        // Not JSON, just log the raw data
-                        log(`Received: ${event.data}`, 'received');
+                        // Not JSON, show as plain text
+                        log(`Received: ${event.data}`, 'info');
                     }
                 };
-            } catch (error) {
-                log(`Failed to connect: ${error.message}`, 'error');
+            } catch (e) {
+                log(`Connection error: ${e.message}`, 'error');
             }
         }
         
-        // Disconnect from WebSocket server
         function disconnect() {
-            if (socket) {
-                log('Disconnecting...', 'info');
-                socket.close();
-            }
+            if (!socket) return;
+            
+            clearTimeout(reconnectTimer);
+            reconnectAttempts = MAX_RECONNECT_ATTEMPTS; // Prevent auto-reconnect
+            
+            log('Disconnecting...');
+            socket.close();
         }
         
-        // Send a message to the server
         function sendMessage() {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                const message = messageInput.value;
-                log(`Sending: ${message}`, 'info');
+            if (!socket || socket.readyState !== WebSocket.OPEN) {
+                log('Not connected!', 'error');
+                return;
+            }
+            
+            const message = messageInput.value;
+            if (!message) return;
+            
+            try {
                 socket.send(message);
-            } else {
-                log('Not connected to server', 'error');
+                log(`Sent: ${message}`);
+                messageInput.value = '';
+            } catch (e) {
+                log(`Send error: ${e.message}`, 'error');
             }
         }
         
-        // Request battle info
-        function requestInfo() {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                log('Requesting battle info', 'info');
-                socket.send('/info');
-            } else {
-                log('Not connected to server', 'error');
-            }
-        }
-        
-        // Start a new duel
-        function startDuel() {
-            if (socket && socket.readyState === WebSocket.OPEN) {
-                log('Requesting to start a new duel', 'info');
-                socket.send('/start-duel');
-            } else {
-                log('Not connected to server', 'error');
-            }
-        }
-        
-        // Event listeners
         connectBtn.addEventListener('click', connect);
         disconnectBtn.addEventListener('click', disconnect);
         sendBtn.addEventListener('click', sendMessage);
-        requestInfoBtn.addEventListener('click', requestInfo);
-        startDuelBtn.addEventListener('click', startDuel);
+        
+        messageInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
+        });
     </script>
 </body>
 </html> 
