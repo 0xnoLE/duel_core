@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>WebSocket Test</title>
+</head>
+<body>
+    <h1>WebSocket Connection Test</h1>
+    <div id="status">Disconnected</div>
+    <button id="connect">Connect</button>
+    <button id="disconnect" disabled>Disconnect</button>
+    <div id="messages" style="border: 1px solid #ccc; padding: 10px; margin-top: 10px; height: 300px; overflow-y: auto;"></div>
+    
+    <script>
+        let socket = null;
+        let reconnectTimer = null;
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 5;
+        const RECONNECT_DELAY = 3000; // 3 seconds
+        
+        const statusEl = document.getElementById('status');
+        const messagesEl = document.getElementById('messages');
+        const connectBtn = document.getElementById('connect');
+        const disconnectBtn = document.getElementById('disconnect');
+        
+        function addMessage(message) {
+            const div = document.createElement('div');
+            div.textContent = message;
+            messagesEl.appendChild(div);
+            messagesEl.scrollTop = messagesEl.scrollHeight;
+        }
+        
+        function connect() {
+            if (socket) return;
+            
+            clearTimeout(reconnectTimer);
+            statusEl.textContent = 'Connecting...';
+            
+            try {
+                socket = new WebSocket(`ws://${window.location.hostname}:5556`);
+                
+                socket.onopen = () => {
+                    statusEl.textContent = 'Connected';
+                    connectBtn.disabled = true;
+                    disconnectBtn.disabled = false;
+                    addMessage('Connection established');
+                    reconnectAttempts = 0; // Reset reconnect attempts on successful connection
+                };
+                
+                socket.onclose = (event) => {
+                    statusEl.textContent = 'Disconnected';
+                    connectBtn.disabled = false;
+                    disconnectBtn.disabled = true;
+                    socket = null;
+                    addMessage(`Connection closed (code: ${event.code}, reason: ${event.reason || 'none'})`);
+                    
+                    // Attempt to reconnect if not manually disconnected
+                    if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                        reconnectAttempts++;
+                        const delay = RECONNECT_DELAY * Math.min(reconnectAttempts, 3); // Increase delay with attempts
+                        addMessage(`Attempting to reconnect in ${delay/1000} seconds... (Attempt ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`);
+                        reconnectTimer = setTimeout(connect, delay);
+                    } else {
+                        addMessage('Maximum reconnection attempts reached. Please reconnect manually.');
+                    }
+                };
+                
+                socket.onerror = (error) => {
+                    addMessage(`Error: ${error.message || 'Unknown error'}`);
+                };
+                
+                socket.onmessage = (event) => {
+                    // Handle ping messages
+                    if (event.data === 'ping') {
+                        socket.send('pong');
+                        return;
+                    }
+                    
+                    addMessage(`Received: ${event.data}`);
+                };
+            } catch (e) {
+                statusEl.textContent = 'Connection error';
+                addMessage(`Error: ${e.message}`);
+            }
+        }
+        
+        connectBtn.addEventListener('click', connect);
+        
+        disconnectBtn.addEventListener('click', () => {
+            if (!socket) return;
+            
+            // Clear any pending reconnect attempts
+            clearTimeout(reconnectTimer);
+            reconnectAttempts = MAX_RECONNECT_ATTEMPTS; // Prevent auto-reconnect
+            
+            socket.close();
+        });
+        
+        // Auto-connect on page load
+        window.addEventListener('load', connect);
+    </script>
+</body>
+</html> 

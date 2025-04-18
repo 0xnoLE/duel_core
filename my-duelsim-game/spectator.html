@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DuelSim Web Spectator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f0f0;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: #333;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .battle-area {
+            display: flex;
+            margin-top: 20px;
+        }
+        
+        .arena {
+            flex: 2;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 20px;
+            position: relative;
+            min-height: 400px;
+        }
+        
+        .sidebar {
+            flex: 1;
+            margin-left: 20px;
+        }
+        
+        .player-card {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .player1 {
+            border-top: 4px solid #3498db;
+        }
+        
+        .player2 {
+            border-top: 4px solid #e74c3c;
+        }
+        
+        .health-bar {
+            height: 20px;
+            background-color: #ddd;
+            border-radius: 10px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .health-fill {
+            height: 100%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+        
+        .player1 .health-fill {
+            background-color: #3498db;
+        }
+        
+        .player2 .health-fill {
+            background-color: #e74c3c;
+        }
+        
+        .events-panel {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .events-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-top: 10px;
+        }
+        
+        .event {
+            padding: 8px;
+            margin-bottom: 5px;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        
+        .event-attack {
+            background-color: #ffeeee;
+        }
+        
+        .event-movement {
+            background-color: #eeeeff;
+        }
+        
+        .event-special {
+            background-color: #eeffee;
+        }
+        
+        .event-victory {
+            background-color: #f8e8a0;
+            font-weight: bold;
+        }
+        
+        .grid-cell {
+            width: 60px;
+            height: 60px;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(5, 60px);
+            grid-template-rows: repeat(5, 60px);
+            gap: 2px;
+            margin: 20px auto;
+        }
+        
+        .player1-token {
+            color: #3498db;
+        }
+        
+        .player2-token {
+            color: #e74c3c;
+        }
+        
+        .connection-status {
+            padding: 10px;
+            text-align: center;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        
+        .connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        
+        .connecting {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        .betting-panel {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-top: 20px;
+        }
+        
+        .bet-form {
+            margin-top: 10px;
+        }
+        
+        .bet-form input, .bet-form select, .bet-form button {
+            margin-bottom: 10px;
+            padding: 8px;
+            width: 100%;
+        }
+        
+        .bet-form button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .bet-form button:hover {
+            background-color: #45a049;
+        }
+        
+        .odds-display {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+        }
+        
+        .odds-player {
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            flex: 1;
+            margin: 0 5px;
+        }
+        
+        .odds-player1 {
+            background-color: #e8f4f8;
+        }
+        
+        .odds-player2 {
+            background-color: #f8e8e8;
+        }
+        
+        .attacking {
+            animation: attack-pulse 0.5s ease-in-out;
+        }
+        
+        .hit {
+            animation: hit-flash 0.5s ease-in-out;
+        }
+        
+        .damage-number {
+            position: absolute;
+            color: red;
+            font-weight: bold;
+            font-size: 18px;
+            animation: float-up 1s ease-out;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        
+        @keyframes attack-pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.2); background-color: #ffcc00; }
+            100% { transform: scale(1); }
+        }
+        
+        @keyframes hit-flash {
+            0% { background-color: white; }
+            50% { background-color: #ff6666; }
+            100% { background-color: white; }
+        }
+        
+        @keyframes float-up {
+            0% { opacity: 1; transform: translate(-50%, -50%); }
+            100% { opacity: 0; transform: translate(-50%, -100%); }
+        }
+        
+        .control-panel {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            margin-bottom: 10px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        
+        .form-group input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .action-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        .action-button:hover {
+            background-color: #45a049;
+        }
+        
+        .duel-status {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>DuelSim Web Spectator</h1>
+    </header>
+    
+    <div class="container">
+        <div id="connection-status" class="connection-status disconnected">
+            Disconnected
+        </div>
+        
+        <div class="control-panel">
+            <h3>Control Panel</h3>
+            <div class="start-duel-form">
+                <h4>Start a New Duel</h4>
+                <div class="form-group">
+                    <label for="player1-input">Player 1 (optional):</label>
+                    <input type="text" id="player1-input" placeholder="Random name if empty">
+                </div>
+                <div class="form-group">
+                    <label for="player2-input">Player 2 (optional):</label>
+                    <input type="text" id="player2-input" placeholder="Random name if empty">
+                </div>
+                <div class="form-group">
+                    <label for="max-ticks-input">Max Ticks:</label>
+                    <input type="number" id="max-ticks-input" value="150" min="50" max="500">
+                </div>
+                <div class="form-group">
+                    <label for="tick-duration-input">Tick Duration (ms):</label>
+                    <input type="number" id="tick-duration-input" value="500" min="100" max="2000" step="100">
+                </div>
+                <button id="start-duel-btn" class="action-button">Start Duel</button>
+            </div>
+            
+            <div id="duel-status" class="duel-status">
+                <h4>Duel Status</h4>
+                <div id="no-duel-status" style="display: block;">
+                    <p>No duel in progress or queued.</p>
+                </div>
+                <div id="current-duel-status" style="display: none;">
+                    <p><strong>Current Duel:</strong> <span id="current-duel-players"></span></p>
+                </div>
+                <div id="queue-status" style="display: none;">
+                    <p><strong>Queue Size:</strong> <span id="queue-size">0</span> duel(s) waiting</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="battle-area">
+            <div class="arena">
+                <h2>Arena</h2>
+                <div id="no-battle" style="text-align: center; padding: 50px 0;">
+                    <p>No battle in progress. Waiting for a battle to start...</p>
+                </div>
+                
+                <div id="battle-view" style="display: none;">
+                    <div class="grid-container" id="arena-grid">
+                        <!-- Grid cells will be generated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div id="player1-card" class="player-card player1">
+                    <h3 id="player1-name">Player 1</h3>
+                    <div class="health-bar">
+                        <div id="player1-health" class="health-fill" style="width: 100%;"></div>
+                    </div>
+                    <p id="player1-stats">HP: 99/99</p>
+                </div>
+                
+                <div id="player2-card" class="player-card player2">
+                    <h3 id="player2-name">Player 2</h3>
+                    <div class="health-bar">
+                        <div id="player2-health" class="health-fill" style="width: 100%;"></div>
+                    </div>
+                    <p id="player2-stats">HP: 99/99</p>
+                </div>
+                
+                <div class="betting-panel">
+                    <h3>Betting</h3>
+                    <div id="betting-closed" style="display: block;">
+                        <p>No active betting pool or betting is closed.</p>
+                    </div>
+                    
+                    <div id="betting-open" style="display: none;">
+                        <div class="odds-display">
+                            <div class="odds-player odds-player1">
+                                <div id="odds-player1-name">Player 1</div>
+                                <div id="odds-player1-value">2.0x</div>
+                            </div>
+                            <div class="odds-player odds-player2">
+                                <div id="odds-player2-name">Player 2</div>
+                                <div id="odds-player2-value">2.0x</div>
+                            </div>
+                        </div>
+                        
+                        <div class="bet-form">
+                            <select id="bet-player">
+                                <option value="player1">Player 1</option>
+                                <option value="player2">Player 2</option>
+                            </select>
+                            <input type="number" id="bet-amount" placeholder="Amount" min="1" step="1">
+                            <button id="place-bet-btn">Place Bet</button>
+                        </div>
+                        
+                        <p id="balance-display">Your balance: 0 credits</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="events-panel">
+            <h3>Battle Events</h3>
+            <div class="events-list" id="events-list">
+                <div class="event">Waiting for battle events...</div>
+            </div>
+        </div>
+        
+        <form id="chat-form" style="margin-top: 20px;">
+            <input type="text" id="chat-input" placeholder="Type a message or command..." style="width: 80%; padding: 8px;">
+            <button type="submit" style="padding: 8px; background-color: #4CAF50; color: white; border: none;">Send</button>
+        </form>
+        
+        <div id="chat-messages" style="max-height: 200px; overflow-y: auto; border: 1px solid #ddd; padding: 10px; margin-top: 10px;">
+            <!-- Chat messages will appear here -->
+        </div>
+    </div>
+    
+    <script>
+        // Configuration
+        const SERVER_URL = `ws://${window.location.hostname}:5556`;
+        
+        // State variables
+        let socket = null;
+        let connected = false;
+        let currentBattle = null;
+        let player1 = null;
+        let player2 = null;
+        let events = [];
+        let bettingPool = null;
+        let userBalance = 100;  // Default starting balance
+        
+        // DOM Elements
+        const connectionStatus = document.getElementById('connection-status');
+        const noBattleView = document.getElementById('no-battle');
+        const battleView = document.getElementById('battle-view');
+        const arenaGrid = document.getElementById('arena-grid');
+        const player1Name = document.getElementById('player1-name');
+        const player1Health = document.getElementById('player1-health');
+        const player1Stats = document.getElementById('player1-stats');
+        const player2Name = document.getElementById('player2-name');
+        const player2Health = document.getElementById('player2-health');
+        const player2Stats = document.getElementById('player2-stats');
+        const eventsList = document.getElementById('events-list');
+        const bettingClosed = document.getElementById('betting-closed');
+        const bettingOpen = document.getElementById('betting-open');
+        const oddsPlayer1Name = document.getElementById('odds-player1-name');
+        const oddsPlayer1Value = document.getElementById('odds-player1-value');
+        const oddsPlayer2Name = document.getElementById('odds-player2-name');
+        const oddsPlayer2Value = document.getElementById('odds-player2-value');
+        const betPlayer = document.getElementById('bet-player');
+        const betAmount = document.getElementById('bet-amount');
+        const placeBetBtn = document.getElementById('place-bet-btn');
+        const balanceDisplay = document.getElementById('balance-display');
+        
+        // Initialize the arena grid
+        function initializeGrid(width = 5, height = 5) {
+            arenaGrid.innerHTML = '';
+            arenaGrid.style.gridTemplateColumns = `repeat(${width}, 60px)`;
+            arenaGrid.style.gridTemplateRows = `repeat(${height}, 60px)`;
+            
+            for (let y = 0; y < height; y++) {
+                for (let x = 0; x < width; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'grid-cell';
+                    cell.id = `cell-${x}-${y}`;
+                    arenaGrid.appendChild(cell);
+                }
+            }
+        }
+        
+        // Update positions of players on the grid
+        function updatePositions() {
+            // Clear all cells
+            const cells = document.querySelectorAll('.grid-cell');
+            cells.forEach(cell => {
+                cell.textContent = '';
+                cell.className = 'grid-cell';
+            });
+            
+            // Place player 1
+            if (player1 && player1.position) {
+                const x = player1.position[0];
+                const y = player1.position[1];
+                const cell = document.getElementById(`cell-${x}-${y}`);
+                if (cell) {
+                    cell.textContent = '1';
+                    cell.classList.add('player1-token');
+                }
+            }
+            
+            // Place player 2
+            if (player2 && player2.position) {
+                const x = player2.position[0];
+                const y = player2.position[1];
+                const cell = document.getElementById(`cell-${x}-${y}`);
+                if (cell) {
+                    cell.textContent = '2';
+                    cell.classList.add('player2-token');
+                }
+            }
+        }
+        
+        // Update player health and stats
+        function updatePlayerStats() {
+            if (player1) {
+                player1Name.textContent = player1.name;
+                const healthPercent = (player1.hp / player1.max_hp) * 100;
+                player1Health.style.width = `${healthPercent}%`;
+                player1Stats.textContent = `HP: ${player1.hp}/${player1.max_hp}`;
+            }
+            
+            if (player2) {
+                player2Name.textContent = player2.name;
+                const healthPercent = (player2.hp / player2.max_hp) * 100;
+                player2Health.style.width = `${healthPercent}%`;
+                player2Stats.textContent = `HP: ${player2.hp}/${player2.max_hp}`;
+            }
+        }
+        
+        // Add an event to the events list
+        function addEvent(event) {
+            const eventDiv = document.createElement('div');
+            eventDiv.className = `event event-${event.type || 'unknown'}`;
+            eventDiv.textContent = event.message || JSON.stringify(event);
+            eventsList.appendChild(eventDiv);
+            eventsList.scrollTop = eventsList.scrollHeight;
+            
+            // Keep only the last 50 events
+            while (eventsList.children.length > 50) {
+                eventsList.removeChild(eventsList.firstChild);
+            }
+        }
+        
+        // Update betting UI
+        function updateBettingUI() {
+            if (bettingPool && bettingPool.status === 'open') {
+                bettingClosed.style.display = 'none';
+                bettingOpen.style.display = 'block';
+                
+                // Update odds display
+                oddsPlayer1Name.textContent = bettingPool.player1.name;
+                oddsPlayer1Value.textContent = `${bettingPool.player1.odds}x`;
+                oddsPlayer2Name.textContent = bettingPool.player2.name;
+                oddsPlayer2Value.textContent = `${bettingPool.player2.odds}x`;
+                
+                // Update balance display
+                balanceDisplay.textContent = `Your balance: ${userBalance} credits`;
+                
+                // Update bet player options
+                betPlayer.innerHTML = '';
+                const option1 = document.createElement('option');
+                option1.value = bettingPool.player1.name;
+                option1.textContent = bettingPool.player1.name;
+                betPlayer.appendChild(option1);
+                
+                const option2 = document.createElement('option');
+                option2.value = bettingPool.player2.name;
+                option2.textContent = bettingPool.player2.name;
+                betPlayer.appendChild(option2);
+            } else {
+                bettingOpen.style.display = 'none';
+                bettingClosed.style.display = 'block';
+            }
+        }
+        
+        // Connect to the server
+        function connect() {
+            try {
+                connectionStatus.className = 'connection-status connecting';
+                connectionStatus.textContent = 'Connecting...';
+                
+                // Create WebSocket connection
+                socket = new WebSocket(SERVER_URL);
+                
+                socket.onopen = function() {
+                    connected = true;
+                    connectionStatus.className = 'connection-status connected';
+                    connectionStatus.textContent = 'Connected to server';
+                    
+                    // Request battle info
+                    socket.send('/info');
+                    
+                    // Request balance
+                    socket.send('/balance');
+                };
+                
+                socket.onclose = function() {
+                    connected = false;
+                    connectionStatus.className = 'connection-status disconnected';
+                    connectionStatus.textContent = 'Disconnected from server';
+                    
+                    // Try to reconnect after 5 seconds
+                    setTimeout(connect, 5000);
+                };
+                
+                socket.onerror = function(error) {
+                    console.error('WebSocket error:', error);
+                    connectionStatus.className = 'connection-status disconnected';
+                    connectionStatus.textContent = 'Connection error';
+                };
+                
+                socket.onmessage = function(event) {
+                    try {
+                        const data = JSON.parse(event.data);
+                        handleMessage(data);
+                    } catch (e) {
+                        console.error('Error parsing message:', e);
+                    }
+                };
+            } catch (e) {
+                console.error('Connection error:', e);
+                connectionStatus.className = 'connection-status disconnected';
+                connectionStatus.textContent = 'Connection error';
+                
+                // Try to reconnect after 5 seconds
+                setTimeout(connect, 5000);
+            }
+        }
+        
+        // Handle incoming messages
+        function handleMessage(data) {
+            const messageType = data.type;
+            const messageData = data.data;
+            
+            switch (messageType) {
+                case 'battle_start':
+                    // New battle started
+                    currentBattle = messageData;
+                    player1 = messageData.players[0];
+                    player2 = messageData.players[1];
+                    
+                    // Initialize the arena
+                    const arenaSize = messageData.arena_size || { width: 5, height: 5 };
+                    initializeGrid(arenaSize.width, arenaSize.height);
+                    
+                    // Update UI
+                    noBattleView.style.display = 'none';
+                    battleView.style.display = 'block';
+                    updatePlayerStats();
+                    updatePositions();
+                    
+                    // Clear events
+                    eventsList.innerHTML = '';
+                    addEvent({ type: 'info', message: `Battle started: ${player1.name} vs ${player2.name}` });
+                    break;
+                
+                case 'battle_info':
+                    // Battle information
+                    currentBattle = messageData;
+                    player1 = messageData.players[0];
+                    player2 = messageData.players[1];
+                    
+                    // Initialize the arena if needed
+                    if (battleView.style.display === 'none') {
+                        const arenaSize = messageData.arena_size || { width: 5, height: 5 };
+                        initializeGrid(arenaSize.width, arenaSize.height);
+                        noBattleView.style.display = 'none';
+                        battleView.style.display = 'block';
+                    }
+                    
+                    // Update UI
+                    updatePlayerStats();
+                    updatePositions();
+                    break;
+                
+                case 'event':
+                    // Battle event
+                    const event = messageData;
+                    
+                    // Add to events list
+                    addEvent(event);
+                    
+                    // Update player stats and positions if included
+                    if (event.players) {
+                        player1 = event.players[0];
+                        player2 = event.players[1];
+                        updatePlayerStats();
+                        updatePositions();
+                    }
+                    
+                    // Handle specific event types
+                    if (event.type === 'attack') {
+                        // Animate attack
+                        const attacker = event.actor === player1.name ? player1 : player2;
+                        const defender = event.actor === player1.name ? player2 : player1;
+                        animateAttack(attacker, defender, event.damage || 0);
+                    } else if (event.type === 'movement') {
+                        // Update positions
+                        if (event.actor === player1.name && event.to_position) {
+                            player1.position = event.to_position;
+                        } else if (event.actor === player2.name && event.to_position) {
+                            player2.position = event.to_position;
+                        }
+                        updatePositions();
+                    } else if (event.type === 'victory') {
+                        // Handle victory
+                        addEvent({ type: 'victory', message: `Battle ended: ${event.winner} is victorious!` });
+                    }
+                    break;
+                
+                case 'battle_end':
+                    // Battle ended
+                    addEvent({ type: 'info', message: `Battle ended. Winner: ${messageData.winner}` });
+                    break;
+                
+                case 'betting_pool_created':
+                    // New betting pool
+                    bettingPool = {
+                        status: 'open',
+                        player1: {
+                            name: messageData.player1,
+                            odds: messageData.odds.player1.odds
+                        },
+                        player2: {
+                            name: messageData.player2,
+                            odds: messageData.odds.player2.odds
+                        }
+                    };
+                    updateBettingUI();
+                    addEvent({ type: 'info', message: 'Betting is now open!' });
+                    break;
+                
+                case 'betting_odds_update':
+                    // Odds updated
+                    if (bettingPool) {
+                        bettingPool.player1.odds = messageData.player1.odds;
+                        bettingPool.player2.odds = messageData.player2.odds;
+                        updateBettingUI();
+                    }
+                    break;
+                
+                case 'betting_locked':
+                    // Betting locked
+                    if (bettingPool) {
+                        bettingPool.status = 'locked';
+                        updateBettingUI();
+                        addEvent({ type: 'info', message: 'Betting is now locked.' });
+                    }
+                    break;
+                
+                case 'betting_settled':
+                    // Betting settled
+                    bettingPool = null;
+                    updateBettingUI();
+                    addEvent({ 
+                        type: 'info', 
+                        message: `Betting settled. Winner: ${messageData.winner}. Total payout: ${messageData.total_payout}`
+                    });
+                    
+                    // If user won, show a notification
+                    if (messageData.user_winnings && messageData.user_winnings > 0) {
+                        addEvent({
+                            type: 'victory',
+                            message: `You won ${messageData.user_winnings} credits from your bets!`
+                        });
+                    }
+                    break;
+                
+                case 'betting_balance':
+                    // Update user balance
+                    userBalance = messageData.balance;
+                    balanceDisplay.textContent = `Balance: ${userBalance} credits`;
+                    break;
+                
+                case 'betting_user_bets':
+                    // Display user's bets
+                    const betsList = document.getElementById('user-bets-list');
+                    if (betsList) {
+                        betsList.innerHTML = '';
+                        if (messageData.bets && messageData.bets.length > 0) {
+                            messageData.bets.forEach(bet => {
+                                const betItem = document.createElement('div');
+                                betItem.className = 'bet-item';
+                                betItem.innerHTML = `
+                                    <span class="bet-player">${bet.player}</span>
+                                    <span class="bet-amount">${bet.amount} ${bet.currency}</span>
+                                    <span class="bet-status">${bet.status}</span>
+                                `;
+                                betsList.appendChild(betItem);
+                            });
+                        } else {
+                            betsList.innerHTML = '<div class="no-bets">No active bets</div>';
+                        }
+                    }
+                    break;
+                
+                case 'chat':
+                    // Chat message
+                    addChatMessage(messageData);
+                    break;
+                
+                case 'stats':
+                    // Spectator stats
+                    document.getElementById('spectator-count').textContent = messageData.spectators;
+                    break;
+                
+                default:
+                    console.log('Unknown message type:', messageType, messageData);
+            }
+        }
+        
+        // Add a chat message to the chat area
+        function addChatMessage(message) {
+            const chatArea = document.getElementById('chat-messages');
+            const messageElement = document.createElement('div');
+            messageElement.className = 'chat-message';
+            
+            // Format based on message type
+            if (message.system) {
+                messageElement.className += ' system-message';
+                messageElement.innerHTML = `<span class="message-text">${message.text}</span>`;
+            } else {
+                messageElement.innerHTML = `
+                    <span class="message-sender">${message.sender || 'Anonymous'}:</span>
+                    <span class="message-text">${message.text}</span>
+                `;
+            }
+            
+            chatArea.appendChild(messageElement);
+            chatArea.scrollTop = chatArea.scrollHeight;
+        }
+        
+        // Send a chat message
+        function sendChatMessage() {
+            const chatInput = document.getElementById('chat-input');
+            const message = chatInput.value.trim();
+            
+            if (message && connected) {
+                if (message.startsWith('/')) {
+                    // Command
+                    socket.send(message);
+                } else {
+                    // Regular chat
+                    socket.send(message);
+                }
+                
+                chatInput.value = '';
+            }
+        }
+        
+        // Place a bet
+        function placeBet() {
+            if (!connected || !bettingPool || bettingPool.status !== 'open') {
+                return;
+            }
+            
+            const playerSelect = document.getElementById('bet-player');
+            const amountInput = document.getElementById('bet-amount');
+            
+            const player = playerSelect.value;
+            const amount = parseFloat(amountInput.value);
+            
+            if (!player || isNaN(amount) || amount <= 0) {
+                alert('Please select a player and enter a valid amount');
+                return;
+            }
+            
+            // Send bet command
+            socket.send(`/bet ${player} ${amount}`);
+            
+            // Clear input
+            amountInput.value = '';
+        }
+        
+        // Add animation for attacks
+        function animateAttack(attacker, defender, damage) {
+            // Get attacker and defender cells
+            const attackerX = attacker.position[0];
+            const attackerY = attacker.position[1];
+            const defenderX = defender.position[0];
+            const defenderY = defender.position[1];
+            
+            const attackerCell = document.getElementById(`cell-${attackerX}-${attackerY}`);
+            const defenderCell = document.getElementById(`cell-${defenderX}-${defenderY}`);
+            
+            if (attackerCell && defenderCell) {
+                // Add attack animation classes
+                attackerCell.classList.add('attacking');
+                defenderCell.classList.add('hit');
+                
+                // Show damage number
+                const damageElement = document.createElement('div');
+                damageElement.className = 'damage-number';
+                damageElement.textContent = `-${damage}`;
+                defenderCell.appendChild(damageElement);
+                
+                // Remove classes after animation
+                setTimeout(() => {
+                    attackerCell.classList.remove('attacking');
+                    defenderCell.classList.remove('hit');
+                    if (damageElement.parentNode) {
+                        damageElement.parentNode.removeChild(damageElement);
+                    }
+                }, 1000);
+            }
+        }
+        
+        // Start a duel
+        function startDuel() {
+            const player1 = document.getElementById('player1-input').value.trim();
+            const player2 = document.getElementById('player2-input').value.trim();
+            const maxTicks = document.getElementById('max-ticks-input').value;
+            const tickDuration = document.getElementById('tick-duration-input').value;
+            
+            // Disable the button while request is in progress
+            const startButton = document.getElementById('start-duel-btn');
+            startButton.disabled = true;
+            startButton.textContent = 'Starting...';
+            
+            // Build the URL with query parameters
+            let url = `/api/start-duel?max_ticks=${maxTicks}&tick_duration=${tickDuration}`;
+            if (player1) url += `&player1=${encodeURIComponent(player1)}`;
+            if (player2) url += `&player2=${encodeURIComponent(player2)}`;
+            
+            // Send the request
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Duel queued:', data);
+                    
+                    // Show a message
+                    addEvent({
+                        type: 'info',
+                        message: `Duel queued: ${data.duel.player1} vs ${data.duel.player2}`
+                    });
+                    
+                    // Update duel status
+                    updateDuelStatus();
+                    
+                    // Re-enable the button
+                    startButton.disabled = false;
+                    startButton.textContent = 'Start Duel';
+                })
+                .catch(error => {
+                    console.error('Error starting duel:', error);
+                    
+                    // Show error message
+                    addEvent({
+                        type: 'error',
+                        message: `Error starting duel: ${error.message}`
+                    });
+                    
+                    // Re-enable the button
+                    startButton.disabled = false;
+                    startButton.textContent = 'Start Duel';
+                });
+        }
+        
+        // Update duel status
+        function updateDuelStatus() {
+            fetch('/api/duel-status')
+                .then(response => response.json())
+                .then(data => {
+                    const noDuelStatus = document.getElementById('no-duel-status');
+                    const currentDuelStatus = document.getElementById('current-duel-status');
+                    const queueStatus = document.getElementById('queue-status');
+                    const currentDuelPlayers = document.getElementById('current-duel-players');
+                    const queueSize = document.getElementById('queue-size');
+                    
+                    // Update current duel
+                    if (data.current_duel) {
+                        noDuelStatus.style.display = 'none';
+                        currentDuelStatus.style.display = 'block';
+                        currentDuelPlayers.textContent = `${data.current_duel.player1_name} vs ${data.current_duel.player2_name}`;
+                    } else {
+                        currentDuelStatus.style.display = 'none';
+                    }
+                    
+                    // Update queue
+                    if (data.queue_size > 0) {
+                        queueStatus.style.display = 'block';
+                        queueSize.textContent = data.queue_size;
+                    } else {
+                        queueStatus.style.display = 'none';
+                        
+                        if (!data.current_duel) {
+                            noDuelStatus.style.display = 'block';
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error updating duel status:', error);
+                });
+        }
+        
+        // Add event listener for the start duel button
+        document.getElementById('start-duel-btn').addEventListener('click', startDuel);
+        
+        // Update duel status periodically
+        setInterval(updateDuelStatus, 5000);
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up event listeners
+            document.getElementById('chat-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                sendChatMessage();
+            });
+            
+            document.getElementById('bet-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                placeBet();
+            });
+            
+            // Connect to server
+            connect();
+        });
+    </script>
+</body>
+</html>

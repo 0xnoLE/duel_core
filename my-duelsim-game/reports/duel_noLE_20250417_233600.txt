@@ -1,0 +1,65 @@
+============================================================
+DUEL SIMULATION REPORT - 2025-04-17 23:36:00
+============================================================
+
+SUMMARY:
+Winner: noLE
+Duration: 48 ticks
+
+0xEC: 0/99 HP remaining
+noLE: 45/99 HP remaining
+
+STATISTICS:
+
+0xEC:
+  Damage Dealt: 54
+  Damage Received: 116
+  Attacks: 3
+  Critical Hits: 0
+  Critical Hit Rate: 0.0%
+  Average Damage per Hit: 18.0
+
+noLE:
+  Damage Dealt: 116
+  Damage Received: 54
+  Attacks: 5
+  Critical Hits: 2
+  Critical Hit Rate: 40.0%
+  Average Damage per Hit: 23.2
+
+Movement:
+  0xEC: 8 moves
+  noLE: 7 moves
+
+BATTLE NARRATIVE:
+
+[Tick 0] The duel between 0xEC and noLE begins!
+[Tick 1] noLE moves toward 0xEC
+[Tick 2] 0xEC moves toward noLE
+[Tick 10] noLE prepares a special move
+[Tick 12] 0xEC moves toward noLE
+[Tick 17] noLE moves toward 0xEC
+[Tick 18] 0xEC moves toward noLE
+[Tick 19] noLE moves toward 0xEC
+[Tick 20] 0xEC moves toward noLE
+[Tick 20] 0xEC prepares a special move
+[Tick 21] noLE moves toward 0xEC
+[Tick 22] 0xEC moves toward noLE
+[Tick 23] noLE strikes 0xEC for 14 damage!
+[Tick 24] 0xEC strikes noLE for 21 damage!
+[Tick 25] noLE moves toward 0xEC
+[Tick 29] noLE moves toward 0xEC
+[Tick 30] 0xEC moves toward noLE
+[Tick 30] 0xEC prepares a special move
+[Tick 37] noLE moves toward 0xEC
+[Tick 38] 0xEC strikes noLE for 15 damage!
+[Tick 39] noLE lands a CRITICAL HIT on 0xEC for 31 damage!
+[Tick 40] 0xEC moves toward noLE
+[Tick 40] noLE prepares a special move
+[Tick 42] 0xEC strikes noLE for 18 damage!
+[Tick 43] noLE strikes 0xEC for 24 damage!
+[Tick 45] noLE strikes 0xEC for 14 damage!
+[Tick 46] 0xEC moves toward noLE
+[Tick 47] noLE lands a CRITICAL HIT on 0xEC for 33 damage!
+
+[Tick 48] *** 0xEC is defeated! noLE is victorious! ***

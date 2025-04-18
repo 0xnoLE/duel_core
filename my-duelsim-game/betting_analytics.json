@@ -1,0 +1,2802 @@
+{
+  "matches": [
+    {
+      "timestamp": "2025-04-18T01:47:39.548127",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.9999999999999998,
+      "predicted_p2_prob": 2.220446049250313e-16,
+      "winner": "0xEC",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.9999999999999998,
+      "favorite_won": true,
+      "session_id": "ddb91a8a",
+      "equipment_scores": {
+        "0xEC": 78.0,
+        "noLE": 27.0
+      }
+    },
+    {
+      "timestamp": "2025-04-18T01:50:37.298527",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 1.3187731332389004e-20,
+      "predicted_p2_prob": 1.0,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 1.0,
+      "favorite_won": true,
+      "session_id": "0cd53e8f",
+      "equipment_scores": {
+        "0xEC": 41.2,
+        "noLE": 99.19999999999999
+      }
+    },
+    {
+      "timestamp": "2025-04-18T01:51:02.172475",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 6.165360319530654e-17,
+      "predicted_p2_prob": 0.9999999999999999,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.9999999999999999,
+      "favorite_won": true,
+      "session_id": "c7de12dc",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 42.0,
+        "noLE": 93.8
+      }
+    },
+    {
+      "timestamp": "2025-04-18T01:51:45.494060",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.5062496744995101,
+      "predicted_p2_prob": 0.4937503255004899,
+      "winner": "0xEC",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.5062496744995101,
+      "favorite_won": true,
+      "session_id": "1c133470",
+      "bet_multiplier": 20,
+      "equipment_scores": {
+        "0xEC": 69.6,
+        "noLE": 77.8
+      }
+    },
+    {
+      "timestamp": "2025-04-18T01:54:16.287043",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.9946484333947748,
+      "predicted_p2_prob": 0.005351566605225178,
+      "winner": "0xEC",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.9946484333947748,
+      "favorite_won": true,
+      "session_id": "1c133470",
+      "bet_multiplier": 20,
+      "equipment_scores": {
+        "0xEC": 43.2,
+        "noLE": 43.6
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:02:35.150142",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 5.2700625516023366e-24,
+      "predicted_p2_prob": 1.0,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 1.0,
+      "favorite_won": true,
+      "session_id": "a0ea766f",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 18.0,
+        "noLE": 88.80000000000001
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:03:29.852891",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.9999999999997697,
+      "predicted_p2_prob": 2.3026025530725747e-13,
+      "winner": "0xEC",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.9999999999997697,
+      "favorite_won": true,
+      "session_id": "ba0830af",
+      "bet_multiplier": 20,
+      "equipment_scores": {
+        "0xEC": 86.6,
+        "noLE": 40.400000000000006
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:04:35.482636",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.9999999999985723,
+      "predicted_p2_prob": 1.4277468096679513e-12,
+      "winner": "0xEC",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.9999999999985723,
+      "favorite_won": true,
+      "session_id": "ba0830af",
+      "bet_multiplier": 20,
+      "equipment_scores": {
+        "0xEC": 53.8,
+        "noLE": 19.4
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:05:11.487767",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 3.609633374662766e-13,
+      "predicted_p2_prob": 0.9999999999996391,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.9999999999996391,
+      "favorite_won": true,
+      "session_id": "ba0830af",
+      "bet_multiplier": 20,
+      "equipment_scores": {
+        "0xEC": 33.6,
+        "noLE": 84.0
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:06:03.774761",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 1.0,
+      "predicted_p2_prob": 0.0,
+      "winner": "0xEC",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 1.0,
+      "favorite_won": true,
+      "session_id": "ba0830af",
+      "bet_multiplier": 20,
+      "equipment_scores": {
+        "0xEC": 114.2,
+        "noLE": 76.2
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:07:18.905623",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.9999999999998568,
+      "predicted_p2_prob": 1.432187701766452e-13,
+      "winner": "0xEC",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.9999999999998568,
+      "favorite_won": true,
+      "session_id": "ba0830af",
+      "bet_multiplier": 20,
+      "equipment_scores": {
+        "0xEC": 61.199999999999996,
+        "noLE": 21.6
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:09:59.311810",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 2.098791048793049e-16,
+      "predicted_p2_prob": 0.9999999999999998,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.9999999999999998,
+      "favorite_won": true,
+      "session_id": "ba0830af",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 42.8,
+        "noLE": 75.8
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:13:49.423778",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 2.8232740773694796e-05,
+      "predicted_p2_prob": 0.9999717672592263,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.9999717672592263,
+      "favorite_won": true,
+      "session_id": "22491dfc",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 81.4,
+        "noLE": 100.6
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:21:24.206556",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.5,
+      "predicted_p2_prob": 0.5,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.5,
+      "favorite_won": true,
+      "session_id": "c505540e",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 0,
+        "noLE": 0
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:24:41.984136",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.5,
+      "predicted_p2_prob": 0.5,
+      "winner": "0xEC",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.5,
+      "favorite_won": false,
+      "session_id": "f357e1aa",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 0,
+        "noLE": 0
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:35:17.559987",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.49157410953657604,
+      "predicted_p2_prob": 0.508425890463424,
+      "winner": "0xEC",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.508425890463424,
+      "favorite_won": false,
+      "session_id": "efa3c127",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 23,
+        "noLE": 34
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:36:23.083332",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.5062186559679037,
+      "predicted_p2_prob": 0.4937813440320963,
+      "winner": "0xEC",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.5062186559679037,
+      "favorite_won": true,
+      "session_id": "348fe9db",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 125,
+        "noLE": 116
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:38:16.294161",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.5090190336749634,
+      "predicted_p2_prob": 0.4909809663250366,
+      "winner": "noLE",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.5090190336749634,
+      "favorite_won": false,
+      "session_id": "7f23f5b4",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 31,
+        "noLE": 15
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:39:01.370741",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.5029987200585115,
+      "predicted_p2_prob": 0.49700127994148846,
+      "winner": "noLE",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.5029987200585115,
+      "favorite_won": false,
+      "session_id": "1ae5b84d",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 48,
+        "noLE": 54
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:39:36.874781",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.4644204851752022,
+      "predicted_p2_prob": 0.5355795148247978,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.5355795148247978,
+      "favorite_won": true,
+      "session_id": "1ae5b84d",
+      "bet_multiplier": 20,
+      "equipment_scores": {
+        "0xEC": 17,
+        "noLE": 96
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:44:33.598907",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.5016374269005848,
+      "predicted_p2_prob": 0.49836257309941523,
+      "winner": "noLE",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.5016374269005848,
+      "favorite_won": false,
+      "session_id": "a2781b43",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 20,
+        "noLE": 31
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:44:48.396853",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.5480719349818433,
+      "predicted_p2_prob": 0.45192806501815674,
+      "winner": "0xEC",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.5480719349818433,
+      "favorite_won": true,
+      "session_id": "afcea375",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 126,
+        "noLE": 21
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:44:56.476538",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.4850018201674554,
+      "predicted_p2_prob": 0.5149981798325446,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.5149981798325446,
+      "favorite_won": true,
+      "session_id": "cac85f9d",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 44,
+        "noLE": 74
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:45:07.621276",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.4906816220880069,
+      "predicted_p2_prob": 0.5093183779119931,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.5093183779119931,
+      "favorite_won": true,
+      "session_id": "0d88e532",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 20,
+        "noLE": 47
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:45:14.964536",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.46082984717834885,
+      "predicted_p2_prob": 0.5391701528216511,
+      "winner": "0xEC",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.5391701528216511,
+      "favorite_won": false,
+      "session_id": "99f1d4ee",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 51,
+        "noLE": 147
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:45:22.667638",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.5039895419773409,
+      "predicted_p2_prob": 0.4960104580226591,
+      "winner": "0xEC",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.5039895419773409,
+      "favorite_won": true,
+      "session_id": "609528e2",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 25,
+        "noLE": 25
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:45:32.766093",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.5367658677903608,
+      "predicted_p2_prob": 0.46323413220963916,
+      "winner": "0xEC",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.5367658677903608,
+      "favorite_won": true,
+      "session_id": "f6a3ea3e",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 99,
+        "noLE": 28
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:45:41.467570",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.47197285585806553,
+      "predicted_p2_prob": 0.5280271441419344,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.5280271441419344,
+      "favorite_won": true,
+      "session_id": "305459ef",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 65,
+        "noLE": 125
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:45:49.686932",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.4854236688483991,
+      "predicted_p2_prob": 0.514576331151601,
+      "winner": "0xEC",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.514576331151601,
+      "favorite_won": false,
+      "session_id": "ea073ba3",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 65,
+        "noLE": 78
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:50:43.888263",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.49540313754104337,
+      "predicted_p2_prob": 0.5045968624589566,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.5045968624589566,
+      "favorite_won": true,
+      "session_id": "99a8994b",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 37,
+        "noLE": 79
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:50:47.572938",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.4602577144794845,
+      "predicted_p2_prob": 0.5397422855205155,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.5397422855205155,
+      "favorite_won": true,
+      "session_id": "5a97a487",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 47,
+        "noLE": 157
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:50:53.872155",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.5578101201556946,
+      "predicted_p2_prob": 0.44218987984430536,
+      "winner": "0xEC",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.5578101201556946,
+      "favorite_won": true,
+      "session_id": "8a1d6087",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 150,
+        "noLE": 17
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:53:00.049805",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.505736025753585,
+      "predicted_p2_prob": 0.494263974246415,
+      "winner": "0xEC",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.505736025753585,
+      "favorite_won": true,
+      "session_id": "53de4c91",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 24,
+        "noLE": 15
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:53:15.203529",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.5101746393318147,
+      "predicted_p2_prob": 0.4898253606681853,
+      "winner": "0xEC",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.5101746393318147,
+      "favorite_won": true,
+      "session_id": "a7afffe3",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 56,
+        "noLE": 25
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:53:31.694575",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.5055584872471416,
+      "predicted_p2_prob": 0.4944415127528584,
+      "winner": "noLE",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.5055584872471416,
+      "favorite_won": false,
+      "session_id": "748d7011",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 84,
+        "noLE": 62
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:53:46.521975",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.49774888414515817,
+      "predicted_p2_prob": 0.5022511158548418,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.5022511158548418,
+      "favorite_won": true,
+      "session_id": "fd64db87",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 23,
+        "noLE": 34
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:54:02.940733",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.5273158507115367,
+      "predicted_p2_prob": 0.47268414928846325,
+      "winner": "0xEC",
+      "favorite": "0xEC",
+      "underdog": "noLE",
+      "favorite_prob": 0.5273158507115367,
+      "favorite_won": true,
+      "session_id": "a5281989",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 116,
+        "noLE": 38
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:54:15.905537",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.4850088809946714,
+      "predicted_p2_prob": 0.5149911190053287,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.5149911190053287,
+      "favorite_won": true,
+      "session_id": "6ef7870c",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 57,
+        "noLE": 84
+      }
+    },
+    {
+      "timestamp": "2025-04-18T02:54:28.505750",
+      "player1": "0xEC",
+      "player2": "noLE",
+      "predicted_p1_prob": 0.4602456534901825,
+      "predicted_p2_prob": 0.5397543465098176,
+      "winner": "noLE",
+      "favorite": "noLE",
+      "underdog": "0xEC",
+      "favorite_prob": 0.5397543465098176,
+      "favorite_won": true,
+      "session_id": "4d91b870",
+      "bet_multiplier": 1,
+      "equipment_scores": {
+        "0xEC": 24,
+        "noLE": 99
+      }
+    }
+  ],
+  "summary": {
+    "total_matches": 39,
+    "favorite_wins": 31,
+    "underdog_wins": 8,
+    "probability_buckets": {
+      "50-60": {
+        "predicted": 27,
+        "actual": 19
+      },
+      "60-70": {
+        "predicted": 0,
+        "actual": 0
+      },
+      "70-80": {
+        "predicted": 0,
+        "actual": 0
+      },
+      "80-90": {
+        "predicted": 0,
+        "actual": 0
+      },
+      "90-100": {
+        "predicted": 12,
+        "actual": 12
+      }
+    },
+    "profit_tracking": {
+      "bet_on_favorite": 5714.169600517161,
+      "bet_on_underdog": -17465.780307034438,
+      "optimal_strategy": 1339.2724735293236
+    }
+  },
+  "sessions": {
+    "ddb91a8a": {
+      "start_time": "2025-04-18T01:47:39.548127",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T01:47:39.548127",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.9999999999999998,
+          "predicted_p2_prob": 2.220446049250313e-16,
+          "winner": "0xEC",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.9999999999999998,
+          "favorite_won": true,
+          "session_id": "ddb91a8a",
+          "equipment_scores": {
+            "0xEC": 78.0,
+            "noLE": 27.0
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 1,
+            "actual": 1
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 10.000000000000009,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 10.000000000000009
+        }
+      }
+    },
+    "0cd53e8f": {
+      "start_time": "2025-04-18T01:50:37.298527",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T01:50:37.298527",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 1.3187731332389004e-20,
+          "predicted_p2_prob": 1.0,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 1.0,
+          "favorite_won": true,
+          "session_id": "0cd53e8f",
+          "equipment_scores": {
+            "0xEC": 41.2,
+            "noLE": 99.19999999999999
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 1,
+            "actual": 1
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 10.000000000000009,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 10.000000000000009
+        }
+      }
+    },
+    "c7de12dc": {
+      "start_time": "2025-04-18T01:51:02.172475",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T01:51:02.172475",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 6.165360319530654e-17,
+          "predicted_p2_prob": 0.9999999999999999,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.9999999999999999,
+          "favorite_won": true,
+          "session_id": "c7de12dc",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 42.0,
+            "noLE": 93.8
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 1,
+            "actual": 1
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 10.000000000000009,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 10.000000000000009
+        }
+      }
+    },
+    "e39a516e": {
+      "start_time": "2025-04-18T01:51:34.956467",
+      "matches": [],
+      "summary": {
+        "total_matches": 0,
+        "favorite_wins": 0,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 0,
+          "bet_on_underdog": 0,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "1c133470": {
+      "start_time": "2025-04-18T01:51:34.956467",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T01:51:45.494060",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.5062496744995101,
+          "predicted_p2_prob": 0.4937503255004899,
+          "winner": "0xEC",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.5062496744995101,
+          "favorite_won": true,
+          "session_id": "1c133470",
+          "bet_multiplier": 20,
+          "equipment_scores": {
+            "0xEC": 69.6,
+            "noLE": 77.8
+          }
+        },
+        {
+          "timestamp": "2025-04-18T01:54:16.287043",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.9946484333947748,
+          "predicted_p2_prob": 0.005351566605225178,
+          "winner": "0xEC",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.9946484333947748,
+          "favorite_won": true,
+          "session_id": "1c133470",
+          "bet_multiplier": 20,
+          "equipment_scores": {
+            "0xEC": 43.2,
+            "noLE": 43.6
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 2,
+        "favorite_wins": 2,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 1,
+            "actual": 1
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 2150.619824056668,
+          "bet_on_underdog": -4000,
+          "optimal_strategy": 200.00000000000017
+        }
+      }
+    },
+    "a0ea766f": {
+      "start_time": "2025-04-18T02:02:35.150142",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:02:35.150142",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 5.2700625516023366e-24,
+          "predicted_p2_prob": 1.0,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 1.0,
+          "favorite_won": true,
+          "session_id": "a0ea766f",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 18.0,
+            "noLE": 88.80000000000001
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 1,
+            "actual": 1
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 10.000000000000009,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 10.000000000000009
+        }
+      }
+    },
+    "4ecca140": {
+      "start_time": "2025-04-18T02:03:01.529612",
+      "matches": [],
+      "summary": {
+        "total_matches": 0,
+        "favorite_wins": 0,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 0,
+          "bet_on_underdog": 0,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "ba0830af": {
+      "start_time": "2025-04-18T02:03:01.529612",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:03:29.852891",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.9999999999997697,
+          "predicted_p2_prob": 2.3026025530725747e-13,
+          "winner": "0xEC",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.9999999999997697,
+          "favorite_won": true,
+          "session_id": "ba0830af",
+          "bet_multiplier": 20,
+          "equipment_scores": {
+            "0xEC": 86.6,
+            "noLE": 40.400000000000006
+          }
+        },
+        {
+          "timestamp": "2025-04-18T02:04:35.482636",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.9999999999985723,
+          "predicted_p2_prob": 1.4277468096679513e-12,
+          "winner": "0xEC",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.9999999999985723,
+          "favorite_won": true,
+          "session_id": "ba0830af",
+          "bet_multiplier": 20,
+          "equipment_scores": {
+            "0xEC": 53.8,
+            "noLE": 19.4
+          }
+        },
+        {
+          "timestamp": "2025-04-18T02:05:11.487767",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 3.609633374662766e-13,
+          "predicted_p2_prob": 0.9999999999996391,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.9999999999996391,
+          "favorite_won": true,
+          "session_id": "ba0830af",
+          "bet_multiplier": 20,
+          "equipment_scores": {
+            "0xEC": 33.6,
+            "noLE": 84.0
+          }
+        },
+        {
+          "timestamp": "2025-04-18T02:06:03.774761",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 1.0,
+          "predicted_p2_prob": 0.0,
+          "winner": "0xEC",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 1.0,
+          "favorite_won": true,
+          "session_id": "ba0830af",
+          "bet_multiplier": 20,
+          "equipment_scores": {
+            "0xEC": 114.2,
+            "noLE": 76.2
+          }
+        },
+        {
+          "timestamp": "2025-04-18T02:07:18.905623",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.9999999999998568,
+          "predicted_p2_prob": 1.432187701766452e-13,
+          "winner": "0xEC",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.9999999999998568,
+          "favorite_won": true,
+          "session_id": "ba0830af",
+          "bet_multiplier": 20,
+          "equipment_scores": {
+            "0xEC": 61.199999999999996,
+            "noLE": 21.6
+          }
+        },
+        {
+          "timestamp": "2025-04-18T02:09:59.311810",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 2.098791048793049e-16,
+          "predicted_p2_prob": 0.9999999999999998,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.9999999999999998,
+          "favorite_won": true,
+          "session_id": "ba0830af",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 42.8,
+            "noLE": 75.8
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 6,
+        "favorite_wins": 6,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 6,
+            "actual": 6
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 1010.0000000000009,
+          "bet_on_underdog": -10100,
+          "optimal_strategy": 1010.0000000000009
+        }
+      }
+    },
+    "22491dfc": {
+      "start_time": "2025-04-18T02:13:49.423778",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:13:49.423778",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 2.8232740773694796e-05,
+          "predicted_p2_prob": 0.9999717672592263,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.9999717672592263,
+          "favorite_won": true,
+          "session_id": "22491dfc",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 81.4,
+            "noLE": 100.6
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 1,
+            "actual": 1
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 10.000000000000009,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 10.000000000000009
+        }
+      }
+    },
+    "c505540e": {
+      "start_time": "2025-04-18T02:21:24.206556",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:21:24.206556",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.5,
+          "predicted_p2_prob": 0.5,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.5,
+          "favorite_won": true,
+          "session_id": "c505540e",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 0,
+            "noLE": 0
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 100.0,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "f357e1aa": {
+      "start_time": "2025-04-18T02:24:41.984136",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:24:41.984136",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.5,
+          "predicted_p2_prob": 0.5,
+          "winner": "0xEC",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.5,
+          "favorite_won": false,
+          "session_id": "f357e1aa",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 0,
+            "noLE": 0
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 0,
+        "underdog_wins": 1,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": -100,
+          "bet_on_underdog": 100.0,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "3de38198": {
+      "start_time": "2025-04-18T02:25:06.953518",
+      "matches": [],
+      "summary": {
+        "total_matches": 0,
+        "favorite_wins": 0,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 0,
+          "bet_on_underdog": 0,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "9adf96dc": {
+      "start_time": "2025-04-18T02:25:06.953518",
+      "matches": [],
+      "summary": {
+        "total_matches": 0,
+        "favorite_wins": 0,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 0,
+          "bet_on_underdog": 0,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "efa3c127": {
+      "start_time": "2025-04-18T02:35:17.559987",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:35:17.559987",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.49157410953657604,
+          "predicted_p2_prob": 0.508425890463424,
+          "winner": "0xEC",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.508425890463424,
+          "favorite_won": false,
+          "session_id": "efa3c127",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 23,
+            "noLE": 34
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 0,
+        "underdog_wins": 1,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": -100,
+          "bet_on_underdog": 103.42812621737436,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "348fe9db": {
+      "start_time": "2025-04-18T02:36:23.083332",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:36:23.083332",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.5062186559679037,
+          "predicted_p2_prob": 0.4937813440320963,
+          "winner": "0xEC",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.5062186559679037,
+          "favorite_won": true,
+          "session_id": "348fe9db",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 125,
+            "noLE": 116
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 97.54309490786606,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "7f23f5b4": {
+      "start_time": "2025-04-18T02:38:16.294161",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:38:16.294161",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.5090190336749634,
+          "predicted_p2_prob": 0.4909809663250366,
+          "winner": "noLE",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.5090190336749634,
+          "favorite_won": false,
+          "session_id": "7f23f5b4",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 31,
+            "noLE": 15
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 0,
+        "underdog_wins": 1,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": -100,
+          "bet_on_underdog": 103.67388322299753,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "fda6f3ad": {
+      "start_time": "2025-04-18T02:38:41.358886",
+      "matches": [],
+      "summary": {
+        "total_matches": 0,
+        "favorite_wins": 0,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 0,
+          "bet_on_underdog": 0,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "1ae5b84d": {
+      "start_time": "2025-04-18T02:38:41.358886",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:39:01.370741",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.5029987200585115,
+          "predicted_p2_prob": 0.49700127994148846,
+          "winner": "noLE",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.5029987200585115,
+          "favorite_won": false,
+          "session_id": "1ae5b84d",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 48,
+            "noLE": 54
+          }
+        },
+        {
+          "timestamp": "2025-04-18T02:39:36.874781",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.4644204851752022,
+          "predicted_p2_prob": 0.5355795148247978,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.5355795148247978,
+          "favorite_won": true,
+          "session_id": "1ae5b84d",
+          "bet_multiplier": 20,
+          "equipment_scores": {
+            "0xEC": 17,
+            "noLE": 96
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 2,
+        "favorite_wins": 1,
+        "underdog_wins": 1,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 2,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 1634.2727730246606,
+          "bet_on_underdog": -1898.7932747139546,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "a2781b43": {
+      "start_time": "2025-04-18T02:44:33.598907",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:44:33.598907",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.5016374269005848,
+          "predicted_p2_prob": 0.49836257309941523,
+          "winner": "noLE",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.5016374269005848,
+          "favorite_won": false,
+          "session_id": "a2781b43",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 20,
+            "noLE": 31
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 0,
+        "underdog_wins": 1,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": -100,
+          "bet_on_underdog": 100.65712274114058,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "afcea375": {
+      "start_time": "2025-04-18T02:44:48.396853",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:44:48.396853",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.5480719349818433,
+          "predicted_p2_prob": 0.45192806501815674,
+          "winner": "0xEC",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.5480719349818433,
+          "favorite_won": true,
+          "session_id": "afcea375",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 126,
+            "noLE": 21
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 82.45780091497083,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "cac85f9d": {
+      "start_time": "2025-04-18T02:44:56.476538",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:44:56.476538",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.4850018201674554,
+          "predicted_p2_prob": 0.5149981798325446,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.5149981798325446,
+          "favorite_won": true,
+          "session_id": "cac85f9d",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 44,
+            "noLE": 74
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 94.17544355693788,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "0d88e532": {
+      "start_time": "2025-04-18T02:45:07.621276",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:45:07.621276",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.4906816220880069,
+          "predicted_p2_prob": 0.5093183779119931,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.5093183779119931,
+          "favorite_won": true,
+          "session_id": "0d88e532",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 20,
+            "noLE": 47
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 96.3408436388277,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "99f1d4ee": {
+      "start_time": "2025-04-18T02:45:14.964536",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:45:14.964536",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.46082984717834885,
+          "predicted_p2_prob": 0.5391701528216511,
+          "winner": "0xEC",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.5391701528216511,
+          "favorite_won": false,
+          "session_id": "99f1d4ee",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 51,
+            "noLE": 147
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 0,
+        "underdog_wins": 1,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": -100,
+          "bet_on_underdog": 116.99983326231545,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "609528e2": {
+      "start_time": "2025-04-18T02:45:22.667638",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:45:22.667638",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.5039895419773409,
+          "predicted_p2_prob": 0.4960104580226591,
+          "winner": "0xEC",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.5039895419773409,
+          "favorite_won": true,
+          "session_id": "609528e2",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 25,
+            "noLE": 25
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 98.41681557054203,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "f6a3ea3e": {
+      "start_time": "2025-04-18T02:45:32.766093",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:45:32.766093",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.5367658677903608,
+          "predicted_p2_prob": 0.46323413220963916,
+          "winner": "0xEC",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.5367658677903608,
+          "favorite_won": true,
+          "session_id": "f6a3ea3e",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 99,
+            "noLE": 28
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 86.30096658652666,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "305459ef": {
+      "start_time": "2025-04-18T02:45:41.467570",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:45:41.467570",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.47197285585806553,
+          "predicted_p2_prob": 0.5280271441419344,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.5280271441419344,
+          "favorite_won": true,
+          "session_id": "305459ef",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 65,
+            "noLE": 125
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 89.38420327330722,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "ea073ba3": {
+      "start_time": "2025-04-18T02:45:49.686932",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:45:49.686932",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.4854236688483991,
+          "predicted_p2_prob": 0.514576331151601,
+          "winner": "0xEC",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.514576331151601,
+          "favorite_won": false,
+          "session_id": "ea073ba3",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 65,
+            "noLE": 78
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 0,
+        "underdog_wins": 1,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": -100,
+          "bet_on_underdog": 106.00561204037757,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "99a8994b": {
+      "start_time": "2025-04-18T02:50:43.888263",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:50:43.888263",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.49540313754104337,
+          "predicted_p2_prob": 0.5045968624589566,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.5045968624589566,
+          "favorite_won": true,
+          "session_id": "99a8994b",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 37,
+            "noLE": 79
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 98.17800592871085,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "5a97a487": {
+      "start_time": "2025-04-18T02:50:47.572938",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:50:47.572938",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.4602577144794845,
+          "predicted_p2_prob": 0.5397422855205155,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.5397422855205155,
+          "favorite_won": true,
+          "session_id": "5a97a487",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 47,
+            "noLE": 157
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 85.27360683545892,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "8a1d6087": {
+      "start_time": "2025-04-18T02:50:53.872155",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:50:53.872155",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.5578101201556946,
+          "predicted_p2_prob": 0.44218987984430536,
+          "winner": "0xEC",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.5578101201556946,
+          "favorite_won": true,
+          "session_id": "8a1d6087",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 150,
+            "noLE": 17
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 79.27247352932257,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 79.27247352932257
+        }
+      }
+    },
+    "53de4c91": {
+      "start_time": "2025-04-18T02:53:00.049805",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:53:00.049805",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.505736025753585,
+          "predicted_p2_prob": 0.494263974246415,
+          "winner": "0xEC",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.505736025753585,
+          "favorite_won": true,
+          "session_id": "53de4c91",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 24,
+            "noLE": 15
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 97.73161275389155,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "a7afffe3": {
+      "start_time": "2025-04-18T02:53:15.202524",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:53:15.203529",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.5101746393318147,
+          "predicted_p2_prob": 0.4898253606681853,
+          "winner": "0xEC",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.5101746393318147,
+          "favorite_won": true,
+          "session_id": "a7afffe3",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 56,
+            "noLE": 25
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 96.01131120702486,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "748d7011": {
+      "start_time": "2025-04-18T02:53:31.694575",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:53:31.694575",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.5055584872471416,
+          "predicted_p2_prob": 0.4944415127528584,
+          "winner": "noLE",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.5055584872471416,
+          "favorite_won": false,
+          "session_id": "748d7011",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 84,
+            "noLE": 62
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 0,
+        "underdog_wins": 1,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 0
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": -100,
+          "bet_on_underdog": 102.24839019531112,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "fd64db87": {
+      "start_time": "2025-04-18T02:53:46.521975",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:53:46.521975",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.49774888414515817,
+          "predicted_p2_prob": 0.5022511158548418,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.5022511158548418,
+          "favorite_won": true,
+          "session_id": "fd64db87",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 23,
+            "noLE": 34
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 99.10358950581508,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "a5281989": {
+      "start_time": "2025-04-18T02:54:02.940733",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:54:02.940733",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.5273158507115367,
+          "predicted_p2_prob": 0.47268414928846325,
+          "winner": "0xEC",
+          "favorite": "0xEC",
+          "underdog": "noLE",
+          "favorite_prob": 0.5273158507115367,
+          "favorite_won": true,
+          "session_id": "a5281989",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 116,
+            "noLE": 38
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 89.63966257616647,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "6ef7870c": {
+      "start_time": "2025-04-18T02:54:15.905537",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:54:15.905537",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.4850088809946714,
+          "predicted_p2_prob": 0.5149911190053287,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.5149911190053287,
+          "favorite_won": true,
+          "session_id": "6ef7870c",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 57,
+            "noLE": 84
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 94.17810581499617,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    },
+    "4d91b870": {
+      "start_time": "2025-04-18T02:54:28.505750",
+      "matches": [
+        {
+          "timestamp": "2025-04-18T02:54:28.505750",
+          "player1": "0xEC",
+          "player2": "noLE",
+          "predicted_p1_prob": 0.4602456534901825,
+          "predicted_p2_prob": 0.5397543465098176,
+          "winner": "noLE",
+          "favorite": "noLE",
+          "underdog": "0xEC",
+          "favorite_prob": 0.5397543465098176,
+          "favorite_won": true,
+          "session_id": "4d91b870",
+          "bet_multiplier": 1,
+          "equipment_scores": {
+            "0xEC": 24,
+            "noLE": 99
+          }
+        }
+      ],
+      "summary": {
+        "total_matches": 1,
+        "favorite_wins": 1,
+        "underdog_wins": 0,
+        "probability_buckets": {
+          "50-60": {
+            "predicted": 1,
+            "actual": 1
+          },
+          "60-70": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "70-80": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "80-90": {
+            "predicted": 0,
+            "actual": 0
+          },
+          "90-100": {
+            "predicted": 0,
+            "actual": 0
+          }
+        },
+        "profit_tracking": {
+          "bet_on_favorite": 85.26946683546734,
+          "bet_on_underdog": -100,
+          "optimal_strategy": 0
+        }
+      }
+    }
+  }
+}

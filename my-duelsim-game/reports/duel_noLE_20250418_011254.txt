@@ -1,0 +1,71 @@
+============================================================
+DUEL SIMULATION REPORT - 2025-04-18 01:12:54
+============================================================
+
+SUMMARY:
+Winner: noLE
+Duration: 56 ticks
+
+0xEC: 0/157 HP remaining
+noLE: 116/207 HP remaining
+
+STATISTICS:
+
+0xEC:
+  Damage Dealt: 91
+  Damage Received: 177
+  Attacks: 4
+  Critical Hits: 1
+  Critical Hit Rate: 25.0%
+  Average Damage per Hit: 22.8
+
+noLE:
+  Damage Dealt: 177
+  Damage Received: 91
+  Attacks: 5
+  Critical Hits: 2
+  Critical Hit Rate: 40.0%
+  Average Damage per Hit: 35.4
+
+Movement:
+  0xEC: 10 moves
+  noLE: 9 moves
+
+BATTLE NARRATIVE:
+
+[Tick 0] The duel between 0xEC and noLE begins!
+[Tick 6] 0xEC moves toward noLE
+[Tick 10] 0xEC moves toward noLE
+[Tick 10] 0xEC prepares a special move
+[Tick 11] noLE moves toward 0xEC
+[Tick 12] 0xEC moves toward noLE
+[Tick 15] noLE moves toward 0xEC
+[Tick 16] 0xEC moves toward noLE
+[Tick 20] noLE prepares a special move
+[Tick 24] 0xEC moves toward noLE
+[Tick 25] noLE strikes 0xEC for 23 damage!
+[Tick 26] 0xEC moves toward noLE
+[Tick 30] 0xEC moves toward noLE
+[Tick 30] noLE prepares a special move
+[Tick 31] noLE strikes 0xEC for 22 damage!
+[Tick 33] noLE moves toward 0xEC
+[Tick 34] 0xEC strikes noLE for 17 damage!
+[Tick 35] noLE moves toward 0xEC
+[Tick 37] noLE moves toward 0xEC
+[Tick 38] 0xEC moves toward noLE
+[Tick 39] noLE lands a CRITICAL HIT on 0xEC for 55 damage!
+[Tick 40] 0xEC strikes noLE for 24 damage!
+[Tick 40] 0xEC prepares a special move
+[Tick 41] noLE moves toward 0xEC
+[Tick 42] 0xEC strikes noLE for 19 damage!
+[Tick 45] noLE moves toward 0xEC
+[Tick 47] noLE moves toward 0xEC
+[Tick 48] 0xEC lands a CRITICAL HIT on noLE for 31 damage!
+[Tick 49] noLE moves toward 0xEC
+[Tick 50] 0xEC moves toward noLE
+[Tick 50] 0xEC prepares a special move
+[Tick 53] noLE lands a CRITICAL HIT on 0xEC for 51 damage!
+[Tick 54] 0xEC moves toward noLE
+[Tick 55] noLE strikes 0xEC for 26 damage!
+
+[Tick 56] *** 0xEC is defeated! noLE is victorious! ***

@@ -1,19 +1,19 @@
-Perfect. If you’re focused on **rebuilding the "muscle"** of the Duel Arena — meaning **the logic engine that compels and governs player response** — then your goal is to reconstruct a tick-based combat simulator that *responds to rule inputs and produces pressure states* requiring real-time or strategic decisions.
 
-Let’s break down how to **reconstruct this tick logic-based system**, step-by-step.
 
----
 
-## 🧠 Core Concept: “Tick-Muscle” Simulation
 
-At its heart, **OSRS combat is deterministic and tick-based**:
-- One game tick = 600ms
+# DuelSim: Tick-Based Combat Simulator
+
+This document outlines the core architecture of our tick-based combat simulator that recreates the fundamental mechanics of OSRS-style PvP combat.
+
+## 🧠 Core Concept: "Tick-Muscle" Simulation
+
+At its heart, **our combat system is deterministic and tick-based**:
+- One game tick = 600ms (configurable for testing)
 - All inputs, damage, animations, etc. are aligned to this global rhythm
-- Players respond not to *graphics*, but to **time-pressure and ruleset-induced logic states**
+- Players respond to time-pressure and ruleset-induced logic states
 
----
-
-## 🧩 Layer Breakdown (For Simulation Engine)
+## 🧩 System Architecture
 
 ### 1. **Tick Scheduler (Global Loop)**
 ```python
@@ -24,13 +24,12 @@ while duel_active:
     for player in duel_players:
         process_actions(player, tick)
     update_game_state()
+    broadcast_events()
     sleep(TICK_DURATION_MS)
 ```
 
----
-
 ### 2. **Action Queue**
-Each player has a queue like:
+Each player has a queue of actions:
 ```python
 player.action_queue = [
     {"type": "attack", "target": other_player, "execute_on": tick+4},
@@ -38,11 +37,9 @@ player.action_queue = [
 ]
 ```
 - Queue is **non-preemptive** unless specific interrupts (e.g., stun, death)
-- You **only process actions at their scheduled tick**
+- Actions are processed at their scheduled tick
 
----
-
-### 3. **Combat Logic (Pressure Generator)**
+### 3. **Combat Logic**
 ```python
 def resolve_attack(attacker, defender):
     if attacker.cooldown == 0:
@@ -50,18 +47,18 @@ def resolve_attack(attacker, defender):
         damage = calculate_max_hit(attacker) if accuracy_roll else 0
         defender.hp -= damage
         attacker.cooldown = attacker.weapon_speed  # e.g., 4 ticks for whip
-        log_event(f"{attacker.name} hits {damage} on {defender.name}")
+        
+        # Broadcast event to spectators
+        broadcast_event({
+            "type": "attack",
+            "actor": attacker.name,
+            "target": defender.name,
+            "damage": damage,
+            "tick": current_tick
+        })
 ```
 
-- Pressure emerges when players **must choose to pre-load actions**:
-  - Do I risk eating next tick or attack now?
-  - Do I fake a movement delay?
-  - Is spec ready?
-
----
-
-### 4. **Rule Mask System**
-A bitmask or boolean array that sets the environment:
+### 4. **Rule System**
 ```python
 rules = {
     "allow_melee": True,
@@ -72,52 +69,54 @@ rules = {
     "lock_slots": {"head": True, "weapon": False}
 }
 ```
-- This restricts player *affordances*, which adjusts **input space** and creates **game-state tension**
-- Example: `no_food=True` + `no_movement=True` = “pure damage trade" meta
-- Obstacle logic can dynamically create route-find failures → time loss pressure
 
----
-
-### 5. **Input Window (AI-Simulated or Real-Time)**
+### 5. **Input System**
 ```python
 if player.next_action is None:
     available_actions = get_legal_actions(player, game_state, rules)
     player.next_action = player_controller.decide_action(available_actions)
 ```
 
-- Can simulate **“player brain”** using a decision engine
-- In full version: plug in **RL agent**, scripted logic, or remote human input
+## 🌐 WebSocket Integration
 
----
+Our system broadcasts events to spectators via WebSocket:
 
-## 🛠 Example: Tick Flow with Weapon Cooldowns
+```python
+def broadcast_event(event):
+    """Broadcast an event to all connected spectators"""
+    message = {
+        "type": "event",
+        "data": event
+    }
+    websocket_server.broadcast(json.dumps(message))
+```
 
-| Tick | Player A                 | Player B                 |
-|------|--------------------------|--------------------------|
-| 0    | Input: Attack → T+4      | Input: Move → T+1        |
-| 1    | Movement executed        |                          |
-| 2    |                          |                          |
-| 3    |                          |                          |
-| 4    | Attack resolves (hits 12)|                          |
-| 5    | Cooldown (can’t act)     | Attack enqueued          |
-| 6    |                          | Attack resolves (hits 6) |
+Events include:
+- Battle start/end
+- Player attacks
+- Damage dealt
+- Player movement
+- Special attacks
 
-This tick structure forces response to **cooldowns**, **spacing**, and **rule-induced constraints**.
+## 🖥️ Web Client
 
----
+The web client connects to the WebSocket server and:
+1. Receives battle information
+2. Displays player stats and positions
+3. Animates attacks and damage
+4. Shows battle log
 
-## 🧠 Summary: What You’re Re-Creating
-You're rebuilding:
-- A tick-based **loop**
-- A constrained **affordance matrix** (via rule set)
-- A system that **forces players into time-sensitive choices**
-- A reactive **muscle model** where player input is shaped by engine rhythm, not animation
+## 🧪 Testing Tools
 
----
+We've implemented several testing tools:
+- `test_websocket.py`: Manual testing of WebSocket events
+- `debug_system.py`: End-to-end testing of the entire system
+- `websocket_debug.html`: Browser-based WebSocket debugging
 
-Would you like:
-- A C-Based framework with modular components to simulate a full duel?
-- A config file to easily change rule sets and test resulting state tensions?
-- Or a simplified prototype with dummy AI agents first?
+## 🚀 Future Enhancements
 
-Let's proceed.
+1. **Player Input**: Allow real players to control fighters
+2. **Enhanced Rules**: More complex rule sets and combat mechanics
+3. **AI Agents**: Smarter AI with different fighting styles
+4. **Betting System**: Integrated betting for spectators
+5. **Tournament Mode**: Automated tournaments with multiple fighters

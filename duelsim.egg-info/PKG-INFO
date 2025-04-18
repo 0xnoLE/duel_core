@@ -1,0 +1,18 @@
+Metadata-Version: 2.4
+Name: duelsim
+Version: 0.1.0
+Summary: A turn-based duel simulation engine
+Home-page: https://github.com/0xnoLE/duel_core
+Author: Your Name
+Author-email: olmniverse@gmail.com
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Requires-Python: >=3.6
+Dynamic: author
+Dynamic: author-email
+Dynamic: classifier
+Dynamic: home-page
+Dynamic: requires-python
+Dynamic: summary

@@ -1,0 +1,372 @@
+{
+  "winner": "noLE",
+  "events": [
+    {
+      "tick": 0,
+      "type": "narrative",
+      "message": "The duel between 0xEC and noLE begins!"
+    },
+    {
+      "tick": 4,
+      "type": "movement",
+      "actor": "0xEC",
+      "from_position": [
+        0,
+        0
+      ],
+      "to_position": [
+        0,
+        1
+      ],
+      "message": "0xEC moves toward noLE"
+    },
+    {
+      "tick": 5,
+      "type": "movement",
+      "actor": "noLE",
+      "from_position": [
+        4,
+        4
+      ],
+      "to_position": [
+        3,
+        4
+      ],
+      "message": "noLE moves toward 0xEC"
+    },
+    {
+      "tick": 6,
+      "type": "movement",
+      "actor": "0xEC",
+      "from_position": [
+        0,
+        1
+      ],
+      "to_position": [
+        0,
+        2
+      ],
+      "message": "0xEC moves toward noLE"
+    },
+    {
+      "tick": 10,
+      "type": "movement",
+      "actor": "0xEC",
+      "from_position": [
+        0,
+        2
+      ],
+      "to_position": [
+        1,
+        2
+      ],
+      "message": "0xEC moves toward noLE"
+    },
+    {
+      "tick": 10,
+      "type": "special",
+      "actor": "noLE",
+      "move_name": "Power Attack",
+      "message": "noLE prepares a special move"
+    },
+    {
+      "tick": 12,
+      "type": "movement",
+      "actor": "0xEC",
+      "from_position": [
+        1,
+        2
+      ],
+      "to_position": [
+        1,
+        3
+      ],
+      "message": "0xEC moves toward noLE"
+    },
+    {
+      "tick": 16,
+      "type": "movement",
+      "actor": "0xEC",
+      "from_position": [
+        1,
+        3
+      ],
+      "to_position": [
+        2,
+        3
+      ],
+      "message": "0xEC moves toward noLE"
+    },
+    {
+      "tick": 17,
+      "type": "movement",
+      "actor": "noLE",
+      "from_position": [
+        3,
+        4
+      ],
+      "to_position": [
+        3,
+        3
+      ],
+      "message": "noLE moves toward 0xEC"
+    },
+    {
+      "tick": 18,
+      "type": "movement",
+      "actor": "0xEC",
+      "from_position": [
+        2,
+        3
+      ],
+      "to_position": [
+        3,
+        3
+      ],
+      "message": "0xEC moves toward noLE"
+    },
+    {
+      "tick": 19,
+      "type": "movement",
+      "actor": "noLE",
+      "from_position": [
+        3,
+        3
+      ],
+      "to_position": [
+        3,
+        2
+      ],
+      "message": "noLE moves toward 0xEC"
+    },
+    {
+      "tick": 20,
+      "type": "attack",
+      "attack_type": "melee",
+      "attacker": "0xEC",
+      "defender": "noLE",
+      "damage": 18,
+      "is_critical": false,
+      "defender_hp_before": 108,
+      "defender_hp_after": 90,
+      "message": "0xEC strikes noLE for 18 damage!"
+    },
+    {
+      "tick": 20,
+      "type": "special",
+      "actor": "0xEC",
+      "move_name": "Quick Strike",
+      "message": "0xEC prepares a special move"
+    },
+    {
+      "tick": 22,
+      "type": "movement",
+      "actor": "0xEC",
+      "from_position": [
+        3,
+        3
+      ],
+      "to_position": [
+        3,
+        2
+      ],
+      "message": "0xEC moves toward noLE"
+    },
+    {
+      "tick": 23,
+      "type": "movement",
+      "actor": "noLE",
+      "from_position": [
+        3,
+        2
+      ],
+      "to_position": [
+        3,
+        1
+      ],
+      "message": "noLE moves toward 0xEC"
+    },
+    {
+      "tick": 24,
+      "type": "attack",
+      "attack_type": "melee",
+      "attacker": "0xEC",
+      "defender": "noLE",
+      "damage": 17,
+      "is_critical": false,
+      "defender_hp_before": 90,
+      "defender_hp_after": 73,
+      "message": "0xEC strikes noLE for 17 damage!"
+    },
+    {
+      "tick": 25,
+      "type": "movement",
+      "actor": "noLE",
+      "from_position": [
+        3,
+        1
+      ],
+      "to_position": [
+        3,
+        2
+      ],
+      "message": "noLE moves toward 0xEC"
+    },
+    {
+      "tick": 26,
+      "type": "movement",
+      "actor": "0xEC",
+      "from_position": [
+        3,
+        2
+      ],
+      "to_position": [
+        3,
+        1
+      ],
+      "message": "0xEC moves toward noLE"
+    },
+    {
+      "tick": 27,
+      "type": "movement",
+      "actor": "noLE",
+      "from_position": [
+        3,
+        2
+      ],
+      "to_position": [
+        3,
+        1
+      ],
+      "message": "noLE moves toward 0xEC"
+    },
+    {
+      "tick": 29,
+      "type": "attack",
+      "attack_type": "melee",
+      "attacker": "noLE",
+      "defender": "0xEC",
+      "damage": 19,
+      "is_critical": false,
+      "defender_hp_before": 102,
+      "defender_hp_after": 83,
+      "message": "noLE strikes 0xEC for 19 damage!"
+    },
+    {
+      "tick": 30,
+      "type": "movement",
+      "actor": "0xEC",
+      "from_position": [
+        3,
+        1
+      ],
+      "to_position": [
+        3,
+        0
+      ],
+      "message": "0xEC moves toward noLE"
+    },
+    {
+      "tick": 30,
+      "type": "special",
+      "actor": "0xEC",
+      "move_name": "Defensive Stance",
+      "message": "0xEC prepares a special move"
+    },
+    {
+      "tick": 31,
+      "type": "attack",
+      "attack_type": "melee",
+      "attacker": "noLE",
+      "defender": "0xEC",
+      "damage": 49,
+      "is_critical": true,
+      "defender_hp_before": 83,
+      "defender_hp_after": 34,
+      "message": "noLE lands a CRITICAL HIT on 0xEC for 49 damage!"
+    },
+    {
+      "tick": 32,
+      "type": "movement",
+      "actor": "0xEC",
+      "from_position": [
+        3,
+        0
+      ],
+      "to_position": [
+        3,
+        1
+      ],
+      "message": "0xEC moves toward noLE"
+    },
+    {
+      "tick": 33,
+      "type": "attack",
+      "attack_type": "melee",
+      "attacker": "noLE",
+      "defender": "0xEC",
+      "damage": 41,
+      "is_critical": true,
+      "defender_hp_before": 34,
+      "defender_hp_after": -7,
+      "message": "noLE lands a CRITICAL HIT on 0xEC for 41 damage!"
+    },
+    {
+      "tick": 34,
+      "type": "victory",
+      "winner": "noLE",
+      "message": "0xEC is defeated! noLE is victorious!"
+    }
+  ],
+  "final_state": {
+    "player1": {
+      "name": "0xEC",
+      "hp": 0,
+      "max_hp": 102,
+      "attack": 107,
+      "strength": 99,
+      "defense": 104,
+      "position": [
+        3,
+        1
+      ]
+    },
+    "player2": {
+      "name": "noLE",
+      "hp": 73,
+      "max_hp": 108,
+      "attack": 152,
+      "strength": 99,
+      "defense": 116,
+      "position": [
+        3,
+        1
+      ]
+    },
+    "ticks": 34
+  },
+  "statistics": {
+    "duration": {
+      "ticks": 34,
+      "seconds": 10.2
+    },
+    "damage": {
+      "0xEC": {
+        "dealt": 35,
+        "received": 109,
+        "attacks": 2,
+        "critical_hits": 0
+      },
+      "noLE": {
+        "dealt": 109,
+        "received": 35,
+        "attacks": 3,
+        "critical_hits": 2
+      }
+    },
+    "movement": {
+      "0xEC": 10,
+      "noLE": 6
+    }
+  }
+}

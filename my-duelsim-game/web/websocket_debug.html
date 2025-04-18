@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>DuelSim WebSocket Debugger</title>
+    <style>
+        body {
+            font-family: monospace;
+            margin: 20px;
+            background-color: #111;
+            color: #0f0;
+        }
+        #container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #222;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+        }
+        #log {
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #0f0;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: #000;
+            font-family: monospace;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        .info { color: #0f0; }
+        .error { color: #f00; }
+        .success { color: #0f0; }
+        .received { color: #0ff; }
+        .sent { color: #ff0; }
+        button {
+            padding: 8px 16px;
+            margin-right: 10px;
+            cursor: pointer;
+            background-color: #333;
+            color: #0f0;
+            border: 1px solid #0f0;
+        }
+        button:hover {
+            background-color: #444;
+        }
+        input[type="text"] {
+            padding: 8px;
+            width: 300px;
+            background-color: #333;
+            color: #0f0;
+            border: 1px solid #0f0;
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>DuelSim WebSocket Debugger</h1>
+        
+        <div class="controls">
+            <div>
+                <label for="wsUrl">WebSocket URL:</label>
+                <input type="text" id="wsUrl" value="ws://localhost:5556" />
+            </div>
+            <div style="margin-top: 10px;">
+                <button id="connectBtn">Connect</button>
+                <button id="disconnectBtn" disabled>Disconnect</button>
+            </div>
+        </div>
+        
+        <div id="log"></div>
+        
+        <div class="controls">
+            <button id="requestInfoBtn" disabled>Request Battle Info</button>
+            <button id="simulateAttackBtn" disabled>Simulate Attack</button>
+            <button id="simulateDamageBtn" disabled>Simulate Damage</button>
+        </div>
+    </div>
+    
+    <script>
+        // DOM elements
+        const wsUrlInput = document.getElementById('wsUrl');
+        const connectBtn = document.getElementById('connectBtn');
+        const disconnectBtn = document.getElementById('disconnectBtn');
+        const requestInfoBtn = document.getElementById('requestInfoBtn');
+        const simulateAttackBtn = document.getElementById('simulateAttackBtn');
+        const simulateDamageBtn = document.getElementById('simulateDamageBtn');
+        const logDiv = document.getElementById('log');
+        
+        // WebSocket connection
+        let socket = null;
+        let battleData = null;
+        
+        // Log a message to the log div
+        function log(message, type = 'info') {
+            const div = document.createElement('div');
+            div.className = type;
+            div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logDiv.appendChild(div);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+        
+        // Connect to WebSocket server
+        function connect() {
+            const url = wsUrlInput.value;
+            
+            log(`Connecting to ${url}...`);
+            
+            try {
+                socket = new WebSocket(url);
+                
+                socket.onopen = function() {
+                    log('Connection established', 'success');
+                    connectBtn.disabled = true;
+                    disconnectBtn.disabled = false;
+                    requestInfoBtn.disabled = false;
+                    simulateAttackBtn.disabled = false;
+                    simulateDamageBtn.disabled = false;
+                };
+                
+                socket.onclose = function(event) {
+                    log(`Connection closed (code: ${event.code})`, 'info');
+                    connectBtn.disabled = false;
+                    disconnectBtn.disabled = true;
+                    requestInfoBtn.disabled = true;
+                    simulateAttackBtn.disabled = true;
+                    simulateDamageBtn.disabled = true;
+                    socket = null;
+                };
+                
+                socket.onerror = function(error) {
+                    log(`WebSocket error`, 'error');
+                    console.error(error);
+                };
+                
+                socket.onmessage = function(event) {
+                    try {
+                        // Try to parse as JSON
+                        const data = JSON.parse(event.data);
+                        log(`Received: ${JSON.stringify(data, null, 2)}`, 'received');
+                        
+                        // Store battle data if received
+                        if (data.type === 'battle_info') {
+                            battleData = data.data;
+                        }
+                    } catch (e) {
+                        // Not JSON, just log the raw data
+                        log(`Received: ${event.data}`, 'received');
+                    }
+                };
+            } catch (error) {
+                log(`Failed to connect: ${error.message}`, 'error');
+            }
+        }
+        
+        // Disconnect from WebSocket server
+        function disconnect() {
+            if (socket) {
+                log('Disconnecting...', 'info');
+                socket.close();
+            }
+        }
+        
+        // Request battle info
+        function requestInfo() {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                log('Requesting battle info', 'sent');
+                socket.send('/info');
+            } else {
+                log('Not connected to server', 'error');
+            }
+        }
+        
+        // Simulate attack
+        function simulateAttack() {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                log('Requesting attack simulation', 'sent');
+                socket.send('/attack');
+            } else {
+                log('Not connected to server', 'error');
+            }
+        }
+        
+        // Simulate damage
+        function simulateDamage() {
+            if (socket && socket.readyState === WebSocket.OPEN) {
+                log('Requesting damage simulation', 'sent');
+                socket.send('/damage');
+            } else {
+                log('Not connected to server', 'error');
+            }
+        }
+        
+        // Event listeners
+        connectBtn.addEventListener('click', connect);
+        disconnectBtn.addEventListener('click', disconnect);
+        requestInfoBtn.addEventListener('click', requestInfo);
+        simulateAttackBtn.addEventListener('click', simulateAttack);
+        simulateDamageBtn.addEventListener('click', simulateDamage);
+    </script>
+</body>
+</html> 
