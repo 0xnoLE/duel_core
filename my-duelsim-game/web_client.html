@@ -3,514 +3,619 @@
 <head>
     <title>DuelSim Web Client</title>
     <style>
+        /* CSS Variables for Theming */
+        :root {
+            --bg-color: #1a1a1a;
+            --text-color: #e0e0e0;
+            --primary-color: #00aaff;
+            --secondary-color: #ff4400;
+            --border-color: #444;
+            --cell-bg: #333;
+            --cell-border: #555;
+            --player1-color: #0077cc;
+            --player2-color: #cc3300;
+            --hp-bar-bg: #555;
+            --hp-bar-p1: #00aaff;
+            --hp-bar-p2: #ff4400;
+            --font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            --font-mono: 'Consolas', 'Courier New', monospace;
+        }
+
         body {
-            font-family: 'Courier New', monospace;
-            background-color: #111;
-            color: #0f0;
+            font-family: var(--font-family);
+            background-color: var(--bg-color);
+            color: var(--text-color);
             margin: 0;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
+
         .container {
-            max-width: 900px;
-            margin: 0 auto;
+            display: flex;
+            gap: 30px;
+            width: 100%;
+            max-width: 1200px;
+            justify-content: center;
         }
-        h1, h2, h3 {
-            color: #0f0;
-            text-shadow: 0 0 5px #0f0;
+
+        .left-panel, .right-panel {
+            flex: 1;
+            min-width: 300px;
         }
-        button {
-            background-color: #000;
-            color: #0f0;
-            border: 1px solid #0f0;
-            padding: 8px 15px;
-            margin: 5px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
+
+        .arena-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        button:hover {
-            background-color: #333;
-        }
-        .connection-status {
-            padding: 10px;
-            border-radius: 5px;
-            margin-bottom: 10px;
-        }
-        .connected {
-            background-color: rgba(0, 255, 0, 0.2);
-            border: 1px solid #0f0;
-        }
-        .disconnected {
-            background-color: rgba(255, 0, 0, 0.2);
-            border: 1px solid #f00;
-        }
-        .connecting {
-            background-color: rgba(255, 255, 0, 0.2);
-            border: 1px solid #ff0;
-        }
-        
-        /* Grid Arena */
-        .arena {
+
+        #arena {
             display: grid;
-            grid-template-columns: repeat(5, 50px);
-            grid-template-rows: repeat(5, 50px);
-            gap: 2px;
+            grid-template-columns: repeat(5, 60px); /* Slightly larger cells */
+            grid-template-rows: repeat(5, 60px);
+            gap: 3px;
             margin: 20px 0;
+            border: 2px solid var(--border-color);
+            background-color: #2a2a2a;
+            padding: 5px;
+            position: relative; /* For positioning effects */
         }
+
         .cell {
-            width: 50px;
-            height: 50px;
-            background-color: #222;
-            border: 1px solid #444;
+            width: 60px;
+            height: 60px;
+            background-color: var(--cell-bg);
+            border: 1px solid var(--cell-border);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
-            position: relative;
+            font-size: 1.5em;
+            font-weight: bold;
+            position: relative; /* Keep for potential future cell effects */
+            transition: background-color 0.2s ease;
         }
-        .player1-cell {
-            background-color: rgba(0, 100, 255, 0.3);
-        }
-        .player2-cell {
-            background-color: rgba(255, 0, 0, 0.3);
-        }
-        
-        /* Player Stats */
-        .player-stats {
+
+        .player-icon {
+            /* --- Sizing Fix --- */
+            width: 50px;  /* Fixed size, slightly smaller than cell */
+            height: 50px; /* Fixed size, slightly smaller than cell */
+            border-radius: 50%;
             display: flex;
-            justify-content: space-between;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em; /* Keep text size relative */
+            font-weight: bold;
+            color: white;
+            position: absolute; /* Keep absolute positioning */
+            /* --- Transition Fix --- */
+            /* Apply transition to left/top for smooth movement */
+            transition: transform 0.3s ease-out, box-shadow 0.3s ease, left 0.3s ease-out, top 0.3s ease-out;
+            z-index: 10;
+            box-sizing: border-box; /* Include padding/border in size */
+        }
+
+        .player1-icon { background-color: var(--player1-color); }
+        .player2-icon { background-color: var(--player2-color); }
+
+        .player-icon.moving {
+             /* Add subtle movement indication if needed */
+        }
+        .player-icon.attacking {
+            animation: attackPulse 0.4s ease-out;
+        }
+        .player-icon.hit {
+            animation: hitShake 0.3s ease-in-out;
+        }
+         .player-icon.victory {
+            animation: victoryPulse 1.5s infinite ease-in-out;
+            box-shadow: 0 0 20px gold;
+        }
+
+
+        .player-info {
+            background-color: #282828;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+        }
+        .player-info h3 { margin-top: 0; }
+
+        .health-bar-container {
+            width: 100%; /* Ensure container takes full width */
+            height: 20px; /* Give container a fixed height */
+            background-color: var(--hp-bar-bg); /* Background for the empty part */
+            border-radius: 5px;
+            overflow: hidden; /* Hide overflow of the inner bar */
+            margin: 8px 0; /* Add some spacing */
+            border: 1px solid var(--border-color); /* Optional border */
+        }
+        .health-bar {
+            height: 100%; /* Fill container height */
+            width: 0%; /* Start at 0 width, JS will update */
+            border-radius: 4px; /* Slightly smaller radius */
+            transition: width 0.5s ease-in-out; /* Animate width changes */
+            /* Background color is set dynamically via ID */
+        }
+        #player1-health { background-color: var(--hp-bar-p1); }
+        #player2-health { background-color: var(--hp-bar-p2); }
+
+        #status-bar {
+            width: 100%;
+            max-width: 1200px;
+            padding: 10px;
             margin-bottom: 20px;
-        }
-        .player-card {
-            border: 1px solid #0f0;
-            padding: 10px;
-            width: 45%;
-            background-color: #000;
-        }
-        .hp-bar {
-            height: 20px;
-            background-color: #222;
-            margin-top: 5px;
-        }
-        .hp-fill {
-            height: 100%;
-            background-color: #0f0;
-            transition: width 0.3s;
-        }
-        
-        /* Combat Log */
-        #events {
-            max-height: 200px;
-            overflow-y: auto;
-            border: 1px solid #0f0;
-            padding: 10px;
-            margin-top: 20px;
-            background-color: #000;
-            font-family: 'Courier New', monospace;
-        }
-        .event {
-            margin-bottom: 5px;
-            padding: 5px;
-            border-radius: 3px;
-        }
-        .attack {
-            color: #f55;
-        }
-        .movement {
-            color: #5af;
-        }
-        .victory {
-            color: #5f5;
+            text-align: center;
+            background-color: #282828;
+            border: 1px solid var(--border-color);
+            border-radius: 5px;
             font-weight: bold;
         }
-        .info {
-            color: #ff5;
+        #status-bar.connected { color: lightgreen; }
+        #status-bar.disconnected { color: lightcoral; }
+        #status-bar.connecting { color: orange; }
+
+        #event-log {
+            background-color: #282828;
+            padding: 15px;
+            border-radius: 8px;
+            height: 400px; /* Adjust height as needed */
+            overflow-y: auto;
+            border: 1px solid var(--border-color);
+            font-family: var(--font-mono);
+            font-size: 0.9em;
         }
+        .event { margin-bottom: 5px; padding: 3px; border-radius: 3px; }
+        .event.info { color: #aaa; }
+        .event.move { color: #add8e6; } /* Light blue */
+        .event.attack { color: #ffcccb; } /* Light red */
+        .event.damage { color: #ff8888; font-weight: bold; }
+        .event.victory { color: #ffd700; font-weight: bold; background-color: rgba(255, 215, 0, 0.1); }
+        .event.error { color: #ff6666; font-weight: bold; }
+        .event.end { color: #ffd700; font-weight: bold; }
+
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            transition: background-color 0.2s ease;
+        }
+        button:hover { background-color: #0088cc; }
+        button:disabled { background-color: #555; cursor: not-allowed; }
+
+        /* Damage Number Animation */
+        .damage-number {
+            position: absolute;
+            font-size: 1.2em;
+            font-weight: bold;
+            color: red;
+            pointer-events: none; /* Prevent interaction */
+            animation: floatUp 1s ease-out forwards;
+            z-index: 20;
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-40px); opacity: 0; }
+        }
+        @keyframes attackPulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+         @keyframes hitShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-3px); }
+        }
+        @keyframes victoryPulse {
+             0%, 100% { transform: scale(1); box-shadow: 0 0 15px gold; }
+             50% { transform: scale(1.05); box-shadow: 0 0 25px gold; }
+        }
+        @keyframes damageFloat {
+            0% { transform: translateY(0); opacity: 1; }
+            100% { transform: translateY(-30px); opacity: 0; }
+        }
+
     </style>
 </head>
 <body>
+
+    <h1>DuelSim Enhanced Client</h1>
+    <div id="status-bar" class="disconnected">Disconnected</div>
+
+    <div>
+        <button id="connect-btn">Connect</button>
+        <button id="disconnect-btn" disabled>Disconnect</button>
+        <button id="start-duel-btn">Start Random Duel</button>
+    </div>
+
     <div class="container">
-        <h1>DuelSim Web Client</h1>
-        
-        <div id="connection-status" class="connection-status disconnected">
-            <p>Status: <span id="status-text">Disconnected</span></p>
-        </div>
-        
-        <div class="controls">
-            <button id="connect-btn">Connect</button>
-            <button id="disconnect-btn" style="display: none;">Disconnect</button>
-            <button id="start-duel-btn">Start New Duel</button>
-        </div>
-        
-        <div id="battle-area">
-            <div id="no-battle" style="display: block;">
-                <p>No battle in progress. Please wait for a battle to start or click "Start New Duel".</p>
+        <div class="left-panel">
+            <div id="player1-info" class="player-info">
+                <h3>Player 1: <span id="player1-name">-</span></h3>
+                <div>HP: <span id="player1-hp">-</span> / <span id="player1-max-hp">-</span></div>
+                <div class="health-bar-container">
+                    <div id="player1-health" class="health-bar"></div>
+                </div>
+                <div>Position: <span id="player1-pos">-</span></div>
+                <!-- Add Cooldown/Status later if needed -->
             </div>
-            
-            <div id="battle-info" style="display: none;">
-                <div class="player-stats">
-                    <div class="player-card">
-                        <h3 id="player1-name">Player 1</h3>
-                        <div>HP: <span id="player1-hp">0</span>/<span id="player1-max-hp">0</span></div>
-                        <div class="hp-bar"><div id="player1-health" class="hp-fill" style="width: 100%;"></div></div>
-                        <div>Position: <span id="player1-pos">(0,0)</span></div>
-                    </div>
-                    
-                    <div class="player-card">
-                        <h3 id="player2-name">Player 2</h3>
-                        <div>HP: <span id="player2-hp">0</span>/<span id="player2-max-hp">0</span></div>
-                        <div class="hp-bar"><div id="player2-health" class="hp-fill" style="width: 100%;"></div></div>
-                        <div>Position: <span id="player2-pos">(0,0)</span></div>
-                    </div>
+             <div id="player2-info" class="player-info">
+                <h3>Player 2: <span id="player2-name">-</span></h3>
+                <div>HP: <span id="player2-hp">-</span> / <span id="player2-max-hp">-</span></div>
+                 <div class="health-bar-container">
+                    <div id="player2-health" class="health-bar"></div>
                 </div>
-                
-                <h2>Arena</h2>
-                <div id="arena" class="arena">
-                    <!-- Grid cells will be generated by JavaScript -->
-                </div>
-                
-                <h2>Battle Events</h2>
-                <div id="events">
-                    <div id="event-list"></div>
-                </div>
+                <div>Position: <span id="player2-pos">-</span></div>
+                 <!-- Add Cooldown/Status later if needed -->
             </div>
+        </div>
+
+        <div class="arena-container">
+            <div id="arena"></div>
+        </div>
+
+        <div class="right-panel">
+            <h3>Event Log</h3>
+            <div id="event-log"></div>
         </div>
     </div>
-    
+
     <script>
-        // DOM elements
-        const statusText = document.getElementById('status-text');
-        const connectionStatus = document.getElementById('connection-status');
-        const connectBtn = document.getElementById('connect-btn');
-        const disconnectBtn = document.getElementById('disconnect-btn');
-        const startDuelBtn = document.getElementById('start-duel-btn');
-        const noBattle = document.getElementById('no-battle');
-        const battleInfo = document.getElementById('battle-info');
-        const player1Name = document.getElementById('player1-name');
-        const player2Name = document.getElementById('player2-name');
-        const player1HP = document.getElementById('player1-hp');
-        const player2HP = document.getElementById('player2-hp');
-        const player1MaxHP = document.getElementById('player1-max-hp');
-        const player2MaxHP = document.getElementById('player2-max-hp');
-        const player1Health = document.getElementById('player1-health');
-        const player2Health = document.getElementById('player2-health');
-        const player1Pos = document.getElementById('player1-pos');
-        const player2Pos = document.getElementById('player2-pos');
-        const arena = document.getElementById('arena');
-        const eventList = document.getElementById('event-list');
-        
-        // State
-        let socket = null;
-        let connected = false;
-        let battleData = null;
-        let reconnectAttempts = 0;
-        const MAX_RECONNECT_ATTEMPTS = 5;
-        
-        // Initialize arena grid
-        function initArena() {
-            arena.innerHTML = '';
-            for (let y = 0; y < 5; y++) {
-                for (let x = 0; x < 5; x++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'cell';
-                    cell.id = `cell-${x}-${y}`;
-                    arena.appendChild(cell);
+        // --- Simple Module Pattern for Duel Client ---
+        const DuelClient = (() => {
+            // --- Configuration ---
+            const WS_PORT = 5556;
+            const MAX_RECONNECT_ATTEMPTS = 5;
+            const RECONNECT_DELAY = 3000; // ms
+            const ARENA_SIZE = 5;
+            const ARENA_CELL_SIZE = 60; // Match CSS .cell width/height
+            const ARENA_GAP = 3;        // Match CSS #arena gap
+            const ARENA_PADDING = 5;    // Match CSS #arena padding
+            const ICON_SIZE = 50;       // Match CSS .player-icon width/height
+
+            // --- DOM Elements ---
+            const elements = {
+                statusBar: document.getElementById('status-bar'),
+                connectBtn: document.getElementById('connect-btn'),
+                disconnectBtn: document.getElementById('disconnect-btn'),
+                startDuelBtn: document.getElementById('start-duel-btn'),
+                arena: document.getElementById('arena'),
+                eventLog: document.getElementById('event-log'),
+                p1: {
+                    name: document.getElementById('player1-name'),
+                    hp: document.getElementById('player1-hp'),
+                    maxHp: document.getElementById('player1-max-hp'),
+                    healthBar: document.getElementById('player1-health'),
+                    pos: document.getElementById('player1-pos'),
+                    icon: null // Will be created dynamically
+                },
+                p2: {
+                    name: document.getElementById('player2-name'),
+                    hp: document.getElementById('player2-hp'),
+                    maxHp: document.getElementById('player2-max-hp'),
+                    healthBar: document.getElementById('player2-health'),
+                    pos: document.getElementById('player2-pos'),
+                    icon: null // Will be created dynamically
                 }
-            }
-        }
-        
-        // Update arena with player positions
-        function updateArena(player1Pos, player2Pos) {
-            // Clear all cells
-            document.querySelectorAll('.cell').forEach(cell => {
-                cell.textContent = '';
-                cell.className = 'cell';
-            });
-            
-            // Set player positions
-            if (player1Pos && player1Pos.length === 2) {
-                const [x1, y1] = player1Pos;
-                const cell1 = document.getElementById(`cell-${x1}-${y1}`);
-                if (cell1) {
-                    cell1.textContent = '1';
-                    cell1.className = 'cell player1-cell';
-                }
-            }
-            
-            if (player2Pos && player2Pos.length === 2) {
-                const [x2, y2] = player2Pos;
-                const cell2 = document.getElementById(`cell-${x2}-${y2}`);
-                if (cell2) {
-                    cell2.textContent = '2';
-                    cell2.className = 'cell player2-cell';
-                }
-            }
-        }
-        
-        // Connect to WebSocket server
-        function connect() {
-            if (socket && socket.readyState <= 1) {
-                return; // Already connecting or connected
-            }
-            
-            statusText.textContent = 'Connecting...';
-            connectionStatus.className = 'connection-status connecting';
-            
-            try {
-                // Create WebSocket connection with the correct port
-                socket = new WebSocket(`ws://${window.location.hostname}:5556`);
-                
-                // Connection opened
-                socket.addEventListener('open', function(event) {
-                    connected = true;
-                    statusText.textContent = 'Connected';
-                    connectionStatus.className = 'connection-status connected';
-                    connectBtn.style.display = 'none';
-                    disconnectBtn.style.display = 'inline-block';
-                    
-                    // Add connected event
-                    addEvent({
-                        type: 'info',
-                        message: 'Connected to server'
-                    });
-                });
-                
-                // Connection closed
-                socket.addEventListener('close', function(event) {
-                    connected = false;
-                    statusText.textContent = 'Disconnected';
-                    connectionStatus.className = 'connection-status disconnected';
-                    connectBtn.style.display = 'inline-block';
-                    disconnectBtn.style.display = 'none';
-                    
-                    // Add disconnected event
-                    addEvent({
-                        type: 'error',
-                        message: 'Disconnected from server'
-                    });
-                    
-                    // Try to reconnect if not manually disconnected
-                    if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-                        reconnectAttempts++;
-                        setTimeout(connect, 3000); // Wait 3 seconds before reconnecting
+            };
+
+            // --- State ---
+            let socket = null;
+            let battleData = null;
+            let reconnectTimer = null;
+            let reconnectAttempts = 0;
+
+            // --- Private Methods ---
+
+            function _logEvent(eventData) {
+                const div = document.createElement('div');
+                let message = '';
+                let type = eventData.type || 'info'; // Default type
+
+                if (typeof eventData === 'string') {
+                    message = eventData;
+                } else if (eventData.message) {
+                    message = eventData.message;
+                } else {
+                    // Format specific event types nicely
+                    switch(eventData.type) {
+                        case 'move': message = `${eventData.actor} moves to (${eventData.position.join(',')})`; break;
+                        case 'attack': message = `${eventData.actor} attacks ${eventData.target}`; break;
+                        case 'damage': message = `${eventData.target} takes ${eventData.damage} damage`; type = 'damage'; break; // Assign specific type
+                        case 'victory': message = `${eventData.winner} is victorious!`; break;
+                        case 'info': message = eventData.message; break;
+                        default: message = JSON.stringify(eventData);
                     }
-                });
-                
-                // Connection error
-                socket.addEventListener('error', function(event) {
-                    console.error("WebSocket error:", event);
-                    statusText.textContent = 'Error';
-                    connectionStatus.className = 'connection-status disconnected';
-                    
-                    // Add error event
-                    addEvent({
-                        type: 'error',
-                        message: 'Connection error'
-                    });
-                });
-                
-                // Listen for messages
-                socket.addEventListener('message', function(event) {
-                    try {
-                        const message = JSON.parse(event.data);
-                        console.log("Received message:", message);
-                        
-                        // Handle different message types
-                        if (message.type === 'battle_info') {
-                            handleBattleInfo(message.data);
-                        } else if (message.type === 'event') {
-                            handleEvent(message.data);
-                        } else if (message.type === 'battle_start') {
-                            handleBattleStart(message.data);
-                        } else if (message.type === 'battle_end') {
-                            handleBattleEnd(message.data);
-                        } else if (message.type === 'duel_ended') {
-                            handleBattleEnd(message.data);
-                        }
-                    } catch (error) {
-                        console.error('Error parsing message:', error, event.data);
+                }
+
+                div.className = `event ${type}`;
+                div.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                elements.eventLog.appendChild(div);
+                elements.eventLog.scrollTop = elements.eventLog.scrollHeight; // Auto-scroll
+            }
+
+            function _updateStatus(text, statusClass) {
+                elements.statusBar.textContent = text;
+                elements.statusBar.className = statusClass; // e.g., 'connected', 'disconnected'
+            }
+
+            function _initArena() {
+                elements.arena.innerHTML = '';
+                for (let y = 0; y < ARENA_SIZE; y++) {
+                    for (let x = 0; x < ARENA_SIZE; x++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        cell.id = `cell-${x}-${y}`;
+                        elements.arena.appendChild(cell);
                     }
-                });
-            } catch (error) {
-                console.error('WebSocket connection error:', error);
-                statusText.textContent = 'Connection Failed';
-                connectionStatus.className = 'connection-status disconnected';
-                
-                // Try to reconnect
+                }
+                 // Clear old icons if any
+                if (elements.p1.icon) elements.p1.icon.remove();
+                if (elements.p2.icon) elements.p2.icon.remove();
+                elements.p1.icon = null;
+                elements.p2.icon = null;
+            }
+
+            function _updatePlayerUI() {
+                if (!battleData || !battleData.players) return;
+
+                const p1 = battleData.players[0];
+                const p2 = battleData.players[1];
+
+                // Update Text Info
+                elements.p1.name.textContent = p1.name;
+                elements.p1.hp.textContent = p1.hp;
+                elements.p1.maxHp.textContent = p1.max_hp;
+                elements.p1.pos.textContent = `(${p1.position.join(',')})`;
+
+                elements.p2.name.textContent = p2.name;
+                elements.p2.hp.textContent = p2.hp;
+                elements.p2.maxHp.textContent = p2.max_hp;
+                elements.p2.pos.textContent = `(${p2.position.join(',')})`;
+
+                // Update Health Bars
+                const p1HealthPercent = Math.max(0, (p1.hp / p1.max_hp) * 100);
+                const p2HealthPercent = Math.max(0, (p2.hp / p2.max_hp) * 100);
+                elements.p1.healthBar.style.width = `${p1HealthPercent}%`;
+                elements.p2.healthBar.style.width = `${p2HealthPercent}%`;
+
+                // Update Arena Icons (positioning)
+                _updateArenaIcons(p1, p2);
+            }
+
+            function _updateArenaIcons(p1, p2) {
+                // Create icons if they don't exist (keep this logic)
+                if (!elements.p1.icon) {
+                    elements.p1.icon = document.createElement('div');
+                    elements.p1.icon.className = 'player-icon player1-icon';
+                    elements.p1.icon.textContent = 'P1';
+                    elements.arena.appendChild(elements.p1.icon);
+                }
+                 if (!elements.p2.icon) {
+                    elements.p2.icon = document.createElement('div');
+                    elements.p2.icon.className = 'player-icon player2-icon';
+                    elements.p2.icon.textContent = 'P2';
+                    elements.arena.appendChild(elements.p2.icon);
+                }
+
+                // --- Positioning Logic Fix ---
+                // Calculate offset needed to center the icon within a cell
+                const cellCenterOffsetX = (ARENA_CELL_SIZE - ICON_SIZE) / 2;
+                const cellCenterOffsetY = (ARENA_CELL_SIZE - ICON_SIZE) / 2;
+
+                // Calculate total size of a cell including the gap
+                const cellTotalWidth = ARENA_CELL_SIZE + ARENA_GAP;
+                const cellTotalHeight = ARENA_CELL_SIZE + ARENA_GAP;
+
+                // Calculate position based on grid index, cell size, gap, padding, and centering offset
+                const p1Left = p1.position[0] * cellTotalWidth + cellCenterOffsetX + ARENA_PADDING;
+                const p1Top = p1.position[1] * cellTotalHeight + cellCenterOffsetY + ARENA_PADDING;
+
+                const p2Left = p2.position[0] * cellTotalWidth + cellCenterOffsetX + ARENA_PADDING;
+                const p2Top = p2.position[1] * cellTotalHeight + cellCenterOffsetY + ARENA_PADDING;
+
+                // Apply the calculated positions
+                elements.p1.icon.style.left = `${p1Left}px`;
+                elements.p1.icon.style.top = `${p1Top}px`;
+
+                elements.p2.icon.style.left = `${p2Left}px`;
+                elements.p2.icon.style.top = `${p2Top}px`;
+            }
+
+            // --- Animation & Effects ---
+            function _animateAttack(attackerName) {
+                 const icon = (battleData.players[0].name === attackerName) ? elements.p1.icon : elements.p2.icon;
+                 if (icon) {
+                     icon.classList.add('attacking');
+                     // Use transform for pulse effect if preferred over box-shadow animation
+                     // icon.style.transform = 'scale(1.1)';
+                     setTimeout(() => {
+                         icon.classList.remove('attacking');
+                         // icon.style.transform = 'scale(1)';
+                     }, 400); // Match animation duration
+                 }
+            }
+
+            function _animateHit(targetName, damage) {
+                 const icon = (battleData.players[0].name === targetName) ? elements.p1.icon : elements.p2.icon;
+                 if (icon) {
+                     icon.classList.add('hit');
+                     setTimeout(() => icon.classList.remove('hit'), 300); // Match animation duration
+
+                     // Show damage number (adjust positioning slightly)
+                     const damageEl = document.createElement('div');
+                     damageEl.className = 'damage-number';
+                     damageEl.textContent = `-${damage}`;
+                     // Position above the center of the icon
+                     damageEl.style.left = `${icon.offsetLeft + ICON_SIZE / 2 - 15}px`; // Adjust centering offset as needed
+                     damageEl.style.top = `${icon.offsetTop - 20}px`; // Start slightly higher
+                     elements.arena.appendChild(damageEl);
+                     setTimeout(() => damageEl.remove(), 1000); // Remove after animation
+                 }
+            }
+
+             function _animateVictory(winnerName) {
+                 const icon = (battleData.players[0].name === winnerName) ? elements.p1.icon : elements.p2.icon;
+                 if (icon) {
+                     icon.classList.add('victory');
+                     // The animation loops, remove class on new battle start if needed
+                 }
+            }
+
+
+            // --- WebSocket Handlers ---
+            function _handleOpen() {
+                _updateStatus('Connected', 'connected');
+                elements.connectBtn.disabled = true;
+                elements.disconnectBtn.disabled = false;
+                _logEvent({ type: 'info', message: 'WebSocket connection established.' });
+                reconnectAttempts = 0;
+            }
+
+            function _handleClose(event) {
+                _updateStatus('Disconnected', 'disconnected');
+                elements.connectBtn.disabled = false;
+                elements.disconnectBtn.disabled = true;
+                socket = null;
+                _logEvent({ type: 'error', message: `WebSocket closed (Code: ${event.code})` });
+
+                // Attempt reconnection
                 if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
                     reconnectAttempts++;
-                    setTimeout(connect, 3000); // Wait 3 seconds before reconnecting
+                    const delay = RECONNECT_DELAY * Math.min(reconnectAttempts, 3);
+                     _logEvent({ type: 'info', message: `Attempting reconnect ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS} in ${delay / 1000}s...` });
+                    reconnectTimer = setTimeout(publicMethods.connect, delay);
+                } else {
+                    _logEvent({ type: 'error', message: 'Max reconnect attempts reached.' });
                 }
             }
-        }
-        
-        // Disconnect from server
-        function disconnect() {
-            if (socket) {
-                socket.close();
+
+            function _handleError(error) {
+                _updateStatus('Connection Error', 'disconnected');
+                 _logEvent({ type: 'error', message: `WebSocket Error: ${error.message || 'Unknown error'}` });
             }
-        }
-        
-        // Start a new duel
-        function startDuel() {
-            // Send request to start a new duel
-            fetch('/start-duel', {
-                method: 'POST'
-            })
-            .then(response => response.json())
-            .then(data => {
-                console.log("Duel started:", data);
-                addEvent({
-                    type: 'info',
-                    message: `Requested new duel: ${data.message || JSON.stringify(data)}`
-                });
-            })
-            .catch(error => {
-                console.error("Error starting duel:", error);
-                addEvent({
-                    type: 'error',
-                    message: `Error starting duel: ${error.message}`
-                });
-            });
-        }
-        
-        // Add event to the event list
-        function addEvent(event) {
-            const div = document.createElement('div');
-            div.className = `event ${event.type || ''}`;
-            div.textContent = event.message || JSON.stringify(event);
-            eventList.appendChild(div);
-            eventList.scrollTop = eventList.scrollHeight;
-        }
-        
-        // Handle battle info
-        function handleBattleInfo(data) {
-            console.log("Battle info received:", data);
-            
-            // Store battle data
-            battleData = data;
-            
-            // Show battle info
-            noBattle.style.display = 'none';
-            battleInfo.style.display = 'block';
-            
-            // Initialize arena
-            initArena();
-            
-            // Update player info
-            updatePlayerInfo();
-            
-            // Add battle info event
-            addEvent({
-                type: 'info',
-                message: `Battle info received: ${data.players[0].name} vs ${data.players[1].name}`
-            });
-        }
-        
-        // Handle event
-        function handleEvent(event) {
-            console.log("Event received:", event);
-            
-            // Add event to list
-            addEvent(event);
-            
-            // Update battle state based on event
-            if (event.type === 'attack' && battleData) {
-                // Update HP for the target player
-                for (let i = 0; i < battleData.players.length; i++) {
-                    if (battleData.players[i].name === event.target) {
-                        battleData.players[i].hp = Math.max(0, battleData.players[i].hp - event.damage);
-                        updatePlayerInfo();
-                        break;
+
+            function _handleMessage(event) {
+                if (event.data === 'ping') {
+                    socket.send('pong');
+                    return;
+                }
+
+                try {
+                    const message = JSON.parse(event.data);
+                    console.log("Received:", message); // Keep for debugging
+
+                    switch (message.type) {
+                        case 'battle_info':
+                            battleData = message.data;
+                            _initArena(); // Reset arena for new battle
+                            _updatePlayerUI();
+                            _logEvent({ type: 'info', message: `Battle Info: ${battleData.players[0].name} vs ${battleData.players[1].name}` });
+                            break;
+                        case 'event':
+                            const battleEvent = message.data;
+                            _logEvent(battleEvent); // Log the raw event first
+
+                            // Update state based on event
+                            if (battleEvent.type === 'move') {
+                                const player = battleData.players.find(p => p.name === battleEvent.actor);
+                                if (player) player.position = battleEvent.position;
+                                _updatePlayerUI(); // Update positions visually
+                            } else if (battleEvent.type === 'attack') {
+                                _animateAttack(battleEvent.actor);
+                                // Damage event will handle HP update and hit animation
+                            } else if (battleEvent.type === 'damage') {
+                                const target = battleData.players.find(p => p.name === battleEvent.target);
+                                if (target) target.hp = Math.max(0, target.hp - battleEvent.damage);
+                                _animateHit(battleEvent.target, battleEvent.damage);
+                                _updatePlayerUI(); // Update HP bars
+                            } else if (battleEvent.type === 'victory') {
+                                _animateVictory(battleEvent.winner);
+                            }
+                            break;
+                        case 'battle_end':
+                             _logEvent({ type: 'end', message: `Battle ended. Winner: ${message.data.winner}` });
+                             // Optionally clear battleData or reset UI further
+                            break;
+                        default:
+                            _logEvent({ type: 'info', message: `Unknown message type: ${message.type}` });
                     }
+                } catch (e) {
+                    _logEvent({ type: 'error', message: `Failed to process message: ${e.message}` });
+                    console.error("Message processing error:", e, "Raw data:", event.data);
                 }
-            } else if (event.type === 'movement' && battleData) {
-                // Update position for the player
-                for (let i = 0; i < battleData.players.length; i++) {
-                    if (battleData.players[i].name === event.player) {
-                        battleData.players[i].position = event.new_position;
-                        updatePlayerInfo();
-                        break;
+            }
+
+            // --- Public Methods ---
+            const publicMethods = {
+                connect: () => {
+                    if (socket) return; // Already connected or connecting
+
+                    clearTimeout(reconnectTimer);
+                    _updateStatus('Connecting...', 'connecting');
+                    const wsUrl = `ws://${window.location.hostname}:${WS_PORT}`;
+                     _logEvent({ type: 'info', message: `Attempting to connect to ${wsUrl}` });
+
+                    try {
+                        socket = new WebSocket(wsUrl);
+                        socket.onopen = _handleOpen;
+                        socket.onclose = _handleClose;
+                        socket.onerror = _handleError;
+                        socket.onmessage = _handleMessage;
+                    } catch (e) {
+                        _handleError(e); // Treat connection errors like WebSocket errors
                     }
+                },
+
+                disconnect: () => {
+                    if (!socket) return;
+                    clearTimeout(reconnectTimer);
+                    reconnectAttempts = MAX_RECONNECT_ATTEMPTS; // Prevent auto-reconnect on manual disconnect
+                    socket.close();
+                    _logEvent({ type: 'info', message: 'Manual disconnect initiated.' });
+                },
+
+                startDuel: () => {
+                    // Use the existing API endpoint
+                    fetch('/start-duel', { method: 'POST' })
+                        .then(response => response.json())
+                        .then(data => {
+                            _logEvent({ type: 'info', message: `Duel request sent: ${data.message || JSON.stringify(data)}` });
+                            // Server should broadcast 'battle_info' if successful
+                        })
+                        .catch(error => {
+                            _logEvent({ type: 'error', message: `Error starting duel: ${error.message}` });
+                        });
+                },
+
+                init: () => {
+                    _initArena();
+                    // Setup button listeners
+                    elements.connectBtn.addEventListener('click', publicMethods.connect);
+                    elements.disconnectBtn.addEventListener('click', publicMethods.disconnect);
+                    elements.startDuelBtn.addEventListener('click', publicMethods.startDuel);
+
+                    // Attempt auto-connect on load
+                    publicMethods.connect();
                 }
-            }
-        }
-        
-        // Handle battle start
-        function handleBattleStart(data) {
-            console.log("Battle started:", data);
-            
-            // Store battle data
-            battleData = data;
-            
-            // Show battle info
-            noBattle.style.display = 'none';
-            battleInfo.style.display = 'block';
-            
-            // Initialize arena
-            initArena();
-            
-            // Update player info
-            updatePlayerInfo();
-            
-            // Add battle start event
-            addEvent({
-                type: 'info',
-                message: `Battle started: ${data.players[0].name} vs ${data.players[1].name}`
-            });
-        }
-        
-        // Handle battle end
-        function handleBattleEnd(data) {
-            console.log("Battle ended:", data);
-            
-            // Add battle end event
-            addEvent({
-                type: 'victory',
-                message: `Battle ended. Winner: ${data.winner}`
-            });
-        }
-        
-        // Update player info
-        function updatePlayerInfo() {
-            if (!battleData || !battleData.players || battleData.players.length < 2) {
-                return;
-            }
-            
-            const player1 = battleData.players[0];
-            const player2 = battleData.players[1];
-            
-            player1Name.textContent = player1.name;
-            player2Name.textContent = player2.name;
-            
-            player1HP.textContent = player1.hp;
-            player2HP.textContent = player2.hp;
-            
-            player1MaxHP.textContent = player1.max_hp;
-            player2MaxHP.textContent = player2.max_hp;
-            
-            const player1HealthPercent = Math.max(0, Math.min(100, (player1.hp / player1.max_hp) * 100));
-            const player2HealthPercent = Math.max(0, Math.min(100, (player2.hp / player2.max_hp) * 100));
-            
-            player1Health.style.width = `${player1HealthPercent}%`;
-            player2Health.style.width = `${player2HealthPercent}%`;
-            
-            player1Pos.textContent = `(${player1.position[0]}, ${player1.position[1]})`;
-            player2Pos.textContent = `(${player2.position[0]}, ${player2.position[1]})`;
-            
-            // Update arena
-            updateArena(player1.position, player2.position);
-        }
-        
-        // Event listeners
-        connectBtn.addEventListener('click', connect);
-        disconnectBtn.addEventListener('click', disconnect);
-        startDuelBtn.addEventListener('click', startDuel);
-        
-        // Initialize arena
-        initArena();
-        
-        // Auto-connect on page load
-        window.addEventListener('load', connect);
+            };
+
+            return publicMethods;
+        })();
+
+        // --- Initialize the Client ---
+        document.addEventListener('DOMContentLoaded', DuelClient.init);
+
     </script>
+
 </body>
 </html> 

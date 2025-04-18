@@ -275,8 +275,46 @@ class WebSocketServer:
                                             if client_socket in self.clients:
                                                 self.clients[client_socket]['last_ping'] = time.time()
                                     else:
-                                        # Process other text messages if needed
-                                        print(f"{Fore.CYAN}Received message from {addr}: {message[:50]}...")
+                                        # Handle command
+                                        command = message[1:]  # Remove the leading '/'
+                                        
+                                        if command == 'info':
+                                            # Send battle info
+                                            if self.battle_data:
+                                                battle_info = json.dumps({
+                                                    'type': 'battle_info',
+                                                    'data': self.battle_data
+                                                })
+                                                self._send_message(client_socket, battle_info)
+                                                print(f"{Fore.CYAN}Sent battle info to client on request")
+                                        
+                                        elif command == 'attack':
+                                            # Simulate an attack event
+                                            event = {
+                                                'type': 'attack',
+                                                'actor': self.battle_data['players'][0]['name'],
+                                                'target': self.battle_data['players'][1]['name'],
+                                                'tick': int(time.time()),
+                                                'message': f"{self.battle_data['players'][0]['name']} attacks {self.battle_data['players'][1]['name']}!"
+                                            }
+                                            self.add_event(event)
+                                            print(f"{Fore.CYAN}Simulated attack event")
+                                        
+                                        elif command == 'damage':
+                                            # Simulate a damage event
+                                            event = {
+                                                'type': 'damage',
+                                                'target': self.battle_data['players'][1]['name'],
+                                                'damage': 10,
+                                                'tick': int(time.time()),
+                                                'message': f"{self.battle_data['players'][1]['name']} takes 10 damage!"
+                                            }
+                                            self.add_event(event)
+                                            
+                                            # Update battle data
+                                            self.battle_data['players'][1]['hp'] -= 10
+                                            self.set_battle_data(self.battle_data)
+                                            print(f"{Fore.CYAN}Simulated damage event")
                                 except Exception as e:
                                     print(f"{Fore.RED}Error processing message: {e}")
                 

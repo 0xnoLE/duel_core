@@ -1,0 +1,72 @@
+============================================================
+DUEL SIMULATION REPORT - 2025-04-17 23:43:40
+============================================================
+
+SUMMARY:
+Winner: noLE
+Duration: 64 ticks
+
+0xEC: 0/99 HP remaining
+noLE: 21/99 HP remaining
+
+STATISTICS:
+
+0xEC:
+  Damage Dealt: 78
+  Damage Received: 120
+  Attacks: 4
+  Critical Hits: 0
+  Critical Hit Rate: 0.0%
+  Average Damage per Hit: 19.5
+
+noLE:
+  Damage Dealt: 120
+  Damage Received: 78
+  Attacks: 6
+  Critical Hits: 0
+  Critical Hit Rate: 0.0%
+  Average Damage per Hit: 20.0
+
+Movement:
+  0xEC: 9 moves
+  noLE: 9 moves
+
+BATTLE NARRATIVE:
+
+[Tick 0] The duel between 0xEC and noLE begins!
+[Tick 8] 0xEC moves toward noLE
+[Tick 10] 0xEC prepares a special move
+[Tick 13] noLE moves toward 0xEC
+[Tick 15] noLE moves toward 0xEC
+[Tick 20] noLE prepares a special move
+[Tick 23] noLE moves toward 0xEC
+[Tick 26] 0xEC moves toward noLE
+[Tick 27] noLE moves toward 0xEC
+[Tick 30] 0xEC prepares a special move
+[Tick 34] 0xEC moves toward noLE
+[Tick 36] 0xEC strikes noLE for 15 damage!
+[Tick 37] noLE moves toward 0xEC
+[Tick 39] noLE strikes 0xEC for 14 damage!
+[Tick 40] 0xEC moves toward noLE
+[Tick 40] noLE prepares a special move
+[Tick 41] noLE strikes 0xEC for 18 damage!
+[Tick 42] 0xEC strikes noLE for 20 damage!
+[Tick 43] noLE moves toward 0xEC
+[Tick 44] 0xEC moves toward noLE
+[Tick 48] 0xEC moves toward noLE
+[Tick 49] noLE strikes 0xEC for 20 damage!
+[Tick 50] 0xEC moves toward noLE
+[Tick 50] 0xEC prepares a special move
+[Tick 51] noLE strikes 0xEC for 21 damage!
+[Tick 52] 0xEC moves toward noLE
+[Tick 53] noLE strikes 0xEC for 23 damage!
+[Tick 54] 0xEC strikes noLE for 20 damage!
+[Tick 57] noLE moves toward 0xEC
+[Tick 58] 0xEC moves toward noLE
+[Tick 59] noLE moves toward 0xEC
+[Tick 60] noLE prepares a special move
+[Tick 61] noLE moves toward 0xEC
+[Tick 62] 0xEC strikes noLE for 23 damage!
+[Tick 63] noLE strikes 0xEC for 24 damage!
+
+[Tick 64] *** 0xEC is defeated! noLE is victorious! ***

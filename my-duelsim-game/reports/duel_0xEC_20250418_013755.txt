@@ -1,0 +1,79 @@
+============================================================
+DUEL SIMULATION REPORT - 2025-04-18 01:37:55
+============================================================
+
+SUMMARY:
+Winner: 0xEC
+Duration: 75 ticks
+
+0xEC: 58/186 HP remaining
+noLE: 0/131 HP remaining
+
+STATISTICS:
+
+0xEC:
+  Damage Dealt: 153
+  Damage Received: 128
+  Attacks: 4
+  Critical Hits: 1
+  Critical Hit Rate: 25.0%
+  Average Damage per Hit: 38.2
+
+noLE:
+  Damage Dealt: 128
+  Damage Received: 153
+  Attacks: 5
+  Critical Hits: 2
+  Critical Hit Rate: 40.0%
+  Average Damage per Hit: 25.6
+
+Movement:
+  0xEC: 15 moves
+  noLE: 10 moves
+
+BATTLE NARRATIVE:
+
+[Tick 0] The duel between 0xEC and noLE begins!
+[Tick 5] noLE moves toward 0xEC
+[Tick 6] 0xEC moves toward noLE
+[Tick 10] 0xEC moves toward noLE
+[Tick 10] 0xEC prepares a special move
+[Tick 15] noLE moves toward 0xEC
+[Tick 16] 0xEC moves toward noLE
+[Tick 20] noLE prepares a special move
+[Tick 22] 0xEC moves toward noLE
+[Tick 24] 0xEC moves toward noLE
+[Tick 28] 0xEC moves toward noLE
+[Tick 30] 0xEC prepares a special move
+[Tick 32] 0xEC moves toward noLE
+[Tick 33] noLE lands a CRITICAL HIT on 0xEC for 41 damage!
+[Tick 34] 0xEC moves toward noLE
+[Tick 35] noLE moves toward 0xEC
+[Tick 38] 0xEC moves toward noLE
+[Tick 40] 0xEC strikes noLE for 34 damage!
+[Tick 40] 0xEC prepares a special move
+[Tick 43] noLE strikes 0xEC for 17 damage!
+[Tick 44] 0xEC moves toward noLE
+[Tick 45] noLE moves toward 0xEC
+[Tick 50] 0xEC lands a CRITICAL HIT on noLE for 61 damage!
+[Tick 50] noLE prepares a special move
+[Tick 51] noLE moves toward 0xEC
+[Tick 52] 0xEC moves toward noLE
+[Tick 53] noLE moves toward 0xEC
+[Tick 54] 0xEC moves toward noLE
+[Tick 57] noLE lands a CRITICAL HIT on 0xEC for 39 damage!
+[Tick 59] noLE moves toward 0xEC
+[Tick 60] noLE prepares a special move
+[Tick 61] noLE strikes 0xEC for 15 damage!
+[Tick 62] 0xEC moves toward noLE
+[Tick 63] noLE moves toward 0xEC
+[Tick 65] noLE strikes 0xEC for 16 damage!
+[Tick 66] 0xEC moves toward noLE
+[Tick 67] noLE moves toward 0xEC
+[Tick 68] 0xEC moves toward noLE
+[Tick 70] noLE prepares a special move
+[Tick 71] noLE moves toward 0xEC
+[Tick 72] 0xEC strikes noLE for 27 damage!
+[Tick 74] 0xEC strikes noLE for 31 damage!
+
+[Tick 75] *** noLE is defeated! 0xEC is victorious! ***

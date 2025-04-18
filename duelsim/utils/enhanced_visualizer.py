@@ -108,6 +108,10 @@ class EnhancedVisualizer:
             color = Fore.BLUE if i == 0 else Fore.RED
             print(f"{color}{self.render_health_bar(player.hp, player.max_hp, 20, player.name)}")
         print("=" * 50 + "\n")
+        
+        # Add equipment display
+        for player in players:
+            self.render_player_equipment(player)
     
     def render_attack(self, attacker, defender, damage, is_critical=False):
         """Render an attack animation"""
@@ -194,4 +198,46 @@ class EnhancedVisualizer:
             print(message)
         
         # Small delay for readability
-        time.sleep(self.animation_speed) 
+        time.sleep(self.animation_speed)
+    
+    def render_player_equipment(self, player):
+        """Render a player's equipment"""
+        if not hasattr(player, 'get_equipped_items'):
+            return
+        
+        equipment = player.get_equipped_items()
+        if not equipment:
+            return
+        
+        player_color = Fore.BLUE if player.name == "0xEC" else Fore.RED
+        print(f"\n{player_color}{player.name}'s Equipment:{Style.RESET_ALL}")
+        print("──────────────────────────────────────────────────")
+        
+        for item in equipment:
+            # Get item name with color based on rarity
+            rarity_color = {
+                1: Fore.WHITE,      # COMMON
+                2: Fore.GREEN,      # UNCOMMON
+                3: Fore.BLUE,       # RARE
+                4: Fore.MAGENTA,    # EPIC
+                5: Fore.YELLOW,     # LEGENDARY
+                6: Fore.RED         # MYTHIC
+            }.get(item.rarity.value, Fore.WHITE)
+            
+            item_name = f"{rarity_color}{item.name}{Style.RESET_ALL}"
+            
+            # Format stats string
+            stats_str = ", ".join(f"{stat}: +{value}" for stat, value in item.stats.items())
+            
+            # Format effects string if any
+            effects_str = ""
+            if hasattr(item, 'special_effects') and item.special_effects:
+                effects_str = f" | Effects: {', '.join(f'{effect['name']} ({effect['value']}%)' for effect in item.special_effects)}"
+            
+            # Get slot name as string
+            slot_name = item.slot.name.lower() if hasattr(item.slot, 'name') else str(item.slot)
+            
+            # Print item details
+            print(f"  {slot_name.ljust(10)}: {item_name} [{stats_str}]{effects_str}")
+        
+        print("──────────────────────────────────────────────────") 

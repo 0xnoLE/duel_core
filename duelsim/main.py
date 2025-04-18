@@ -8,6 +8,11 @@ from duelsim.engine.rules import RuleSet
 from duelsim.ai.basic_agent import BasicAgent
 from duelsim.utils.visualizer import DuelVisualizer
 from duelsim.utils.enhanced_visualizer import EnhancedVisualizer
+from duelsim.items.item_generator import ItemGenerator
+from duelsim.items.item import ItemSlot, ItemType
+from duelsim.controllers.human_controller import HumanController
+from duelsim.controllers.ai_controller import AIController
+from duelsim.items.inventory import Inventory
 
 # Add special combat events for more excitement
 SPECIAL_COMBAT_EVENTS = [
@@ -49,9 +54,9 @@ def load_rules(filename="default_rules.json"):
 
 def run_duel_simulation(max_ticks=150, visualize=True, tick_duration_ms=300, 
                         player1_config=None, player2_config=None, rules_config=None,
-                        enhanced_visuals=True):
+                        enhanced_visuals=True, player1_human=False, player2_human=False):
     """
-    Run a complete duel simulation
+    Run a complete duel simulation with optional human control
     
     Args:
         max_ticks (int): Maximum number of ticks to run
@@ -61,6 +66,8 @@ def run_duel_simulation(max_ticks=150, visualize=True, tick_duration_ms=300,
         player2_config (dict): Configuration for player 2 (optional)
         rules_config (dict): Custom rules configuration (optional)
         enhanced_visuals (bool): Whether to use enhanced visualization
+        player1_human (bool): Whether player 1 is human controlled
+        player2_human (bool): Whether player 2 is human controlled
     
     Returns:
         dict: Simulation results including winner, events, and final state
@@ -85,6 +92,29 @@ def run_duel_simulation(max_ticks=150, visualize=True, tick_duration_ms=300,
     # Create players
     player1 = Player(**default_p1)
     player2 = Player(**default_p2)
+    
+    # Set up controllers
+    if player1_human:
+        player1.set_controller(HumanController(player1))
+    else:
+        player1.set_controller(AIController(player1))
+        
+    if player2_human:
+        player2.set_controller(HumanController(player2))
+    else:
+        player2.set_controller(AIController(player2))
+    
+    # Generate and equip random items
+    equip_random_items(player1, level=5)
+    equip_random_items(player2, level=5)
+    
+    # Create inventories and add some items
+    player1.inventory = Inventory()
+    player2.inventory = Inventory()
+    
+    # Add some food and potions
+    add_starter_items(player1)
+    add_starter_items(player2)
     
     # Set faster weapon speeds for more frequent attacks
     player1.weapon_speed = 2  # Attack every 2 ticks
@@ -250,8 +280,16 @@ def run_duel_simulation(max_ticks=150, visualize=True, tick_duration_ms=300,
                         attacker=attacker.name, defender=defender.name)
                     original_log_event(narration, event_type="narrative", **kwargs)
             
-            # Pass through to original log event
-            return original_log_event(message, event_type, **kwargs)
+            # Handle special effects from items
+            if event_type == "attack" and "effects_triggered" in kwargs:
+                effects = kwargs["effects_triggered"]
+                for effect in effects:
+                    effect_message = effect.get("message", "")
+                    if effect_message:
+                        original_log_event(effect_message, event_type="special_effect", **effect)
+            
+            # Call the original log event function
+            original_log_event(message, event_type=event_type, **kwargs)
         
         # Replace log_event temporarily
         tick_manager.log_event = enhanced_log_event
@@ -332,6 +370,12 @@ def run_duel_simulation(max_ticks=150, visualize=True, tick_duration_ms=300,
         "message": f"The duel ends with {winner} as the victor!" if winner != "draw" else "The duel ends in a draw!"
     })
     
+    # Clean up controllers at the end
+    if player1.controller:
+        player1.controller.cleanup()
+    if player2.controller:
+        player2.controller.cleanup()
+    
     # Return comprehensive result
     return {
         "winner": winner,
@@ -359,6 +403,48 @@ def run_duel_simulation(max_ticks=150, visualize=True, tick_duration_ms=300,
         },
         "statistics": stats
     }
+
+def equip_random_items(player, level=1):
+    """Equip a player with random items for all slots"""
+    for slot in ItemSlot:
+        # 80% chance to have an item in each slot
+        if random.random() < 0.8:
+            # Generate an item appropriate for this slot
+            item_type = random.choice(ItemType.for_slot(slot))
+            item = ItemGenerator.generate_item(
+                level=level,
+                slot=slot,
+                item_type=item_type
+            )
+            player.equip_item(item)
+            
+            if hasattr(player, 'equipment_log') and callable(player.equipment_log):
+                player.equipment_log(f"Equipped {item}")
+
+def add_starter_items(player):
+    """Add starter items to a player's inventory"""
+    # Add some food
+    for _ in range(5):
+        food = ItemGenerator.generate_item(
+            level=1,
+            item_type=ItemType.FOOD
+        )
+        player.inventory.add_item(food)
+    
+    # Add a potion
+    potion = ItemGenerator.generate_item(
+        level=1,
+        item_type=ItemType.POTION
+    )
+    player.inventory.add_item(potion)
+    
+    # Add an extra weapon
+    weapon = ItemGenerator.generate_item(
+        level=3,
+        slot=ItemSlot.WEAPON,
+        item_type=random.choice([ItemType.MELEE_WEAPON, ItemType.RANGED_WEAPON, ItemType.MAGIC_WEAPON])
+    )
+    player.inventory.add_item(weapon)
 
 def main():
     """Run a simple demonstration"""

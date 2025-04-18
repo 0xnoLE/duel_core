@@ -168,60 +168,51 @@
         
         // Handle incoming message
         function handleMessage(data) {
-            console.log('Received message:', data);
+            if (!data || !data.type) {
+                console.error("Invalid message format:", data);
+                return;
+            }
+            
+            console.log("Received message:", data);
             
             if (data.type === 'battle_info') {
-                handleBattleInfo(data.data);
-            } else if (data.type === 'battle_start') {
-                handleBattleStart(data.data);
-            } else if (data.type === 'battle_end') {
-                handleBattleEnd(data.data);
-            } else if (data.type === 'event') {
-                handleEvent(data.data);
-            }
-        }
-        
-        // Handle battle info
-        function handleBattleInfo(data) {
-            battleData = data;
-            updatePlayerInfo();
-            addEvent({type: 'info', message: `Battle info received: ${data.players[0].name} vs ${data.players[1].name}`});
-        }
-        
-        // Handle battle start
-        function handleBattleStart(data) {
-            battleData = data;
-            updatePlayerInfo();
-            addEvent({type: 'info', message: `Battle started: ${data.players[0].name} vs ${data.players[1].name}`});
-        }
-        
-        // Handle battle end
-        function handleBattleEnd(data) {
-            addEvent({type: 'victory', message: `Battle ended. Winner: ${data.winner}`});
-        }
-        
-        // Handle event
-        function handleEvent(event) {
-            addEvent(event);
-            
-            if (event.type === 'attack' && battleData) {
-                // Update HP for the target player
-                for (let i = 0; i < battleData.players.length; i++) {
-                    if (battleData.players[i].name === event.target) {
-                        battleData.players[i].hp = Math.max(0, battleData.players[i].hp - event.damage);
+                // Store battle data
+                battleData = data.data;
+                statusEl.textContent = `Battle in progress: ${battleData.players[0].name} vs ${battleData.players[1].name}`;
+                
+                // Update player info and arena
+                updatePlayerInfo();
+                
+                // Add event to log
+                addEvent({type: 'info', message: 'Battle started'});
+            } 
+            else if (data.type === 'event') {
+                const event = data.data;
+                addEvent(event);
+                
+                // Process specific event types
+                if (event.type === 'move') {
+                    // Update player position
+                    const playerIndex = battleData.players.findIndex(p => p.name === event.actor);
+                    if (playerIndex !== -1 && event.position) {
+                        battleData.players[playerIndex].position = event.position;
                         updatePlayerInfo();
-                        break;
+                    }
+                } 
+                else if (event.type === 'attack') {
+                    // Update player health after attack
+                    const targetIndex = battleData.players.findIndex(p => p.name === event.target);
+                    if (targetIndex !== -1 && typeof event.damage === 'number') {
+                        // Update health
+                        battleData.players[targetIndex].hp = Math.max(0, 
+                            battleData.players[targetIndex].hp - event.damage);
+                        updatePlayerInfo();
                     }
                 }
-            } else if (event.type === 'movement' && battleData) {
-                // Update position for the player
-                for (let i = 0; i < battleData.players.length; i++) {
-                    if (battleData.players[i].name === event.player) {
-                        battleData.players[i].position = event.new_position;
-                        updatePlayerInfo();
-                        break;
-                    }
-                }
+            } 
+            else if (data.type === 'battle_end') {
+                statusEl.textContent = `Battle ended. Winner: ${data.data.winner}`;
+                addEvent({type: 'end', message: `Battle ended. Winner: ${data.data.winner}`});
             }
         }
         
@@ -240,6 +231,50 @@
             p2HpEl.textContent = p2.hp;
             p2MaxHpEl.textContent = p2.max_hp;
             
+            // Add health bar visualization
+            const p1HealthPercent = Math.max(0, Math.min(100, (p1.hp / p1.max_hp) * 100));
+            const p2HealthPercent = Math.max(0, Math.min(100, (p2.hp / p2.max_hp) * 100));
+            
+            // If health bars don't exist, create them
+            if (!document.getElementById('p1-health-bar')) {
+                const p1HealthBar = document.createElement('div');
+                p1HealthBar.id = 'p1-health-bar';
+                p1HealthBar.style.width = '100%';
+                p1HealthBar.style.height = '10px';
+                p1HealthBar.style.backgroundColor = '#333';
+                p1HealthBar.style.marginTop = '5px';
+                
+                const p1HealthFill = document.createElement('div');
+                p1HealthFill.id = 'p1-health-fill';
+                p1HealthFill.style.width = `${p1HealthPercent}%`;
+                p1HealthFill.style.height = '100%';
+                p1HealthFill.style.backgroundColor = '#00f';
+                
+                p1HealthBar.appendChild(p1HealthFill);
+                document.getElementById('player1').appendChild(p1HealthBar);
+                
+                const p2HealthBar = document.createElement('div');
+                p2HealthBar.id = 'p2-health-bar';
+                p2HealthBar.style.width = '100%';
+                p2HealthBar.style.height = '10px';
+                p2HealthBar.style.backgroundColor = '#333';
+                p2HealthBar.style.marginTop = '5px';
+                
+                const p2HealthFill = document.createElement('div');
+                p2HealthFill.id = 'p2-health-fill';
+                p2HealthFill.style.width = `${p2HealthPercent}%`;
+                p2HealthFill.style.height = '100%';
+                p2HealthFill.style.backgroundColor = '#f00';
+                
+                p2HealthBar.appendChild(p2HealthFill);
+                document.getElementById('player2').appendChild(p2HealthBar);
+            } else {
+                // Update existing health bars
+                document.getElementById('p1-health-fill').style.width = `${p1HealthPercent}%`;
+                document.getElementById('p2-health-fill').style.width = `${p2HealthPercent}%`;
+            }
+            
+            // Update arena with player positions
             updateArena(p1.position, p2.position);
         }
         

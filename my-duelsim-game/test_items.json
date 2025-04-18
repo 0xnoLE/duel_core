@@ -1,0 +1,118 @@
+[
+  {
+    "name": "Quality Pants of Competence",
+    "slot": "legs",
+    "type": "armor",
+    "rarity": "UNCOMMON",
+    "level": 1,
+    "stats": {
+      "attack": 13
+    },
+    "special_effects": []
+  },
+  {
+    "name": "Eternal Cap of Creation",
+    "slot": "head",
+    "type": "armor",
+    "rarity": "MYTHIC",
+    "level": 1,
+    "stats": {
+      "strength": 57,
+      "hp": 57
+    },
+    "special_effects": []
+  },
+  {
+    "name": "Plain Shoes of Training",
+    "slot": "feet",
+    "type": "armor",
+    "rarity": "COMMON",
+    "level": 1,
+    "stats": {
+      "attack": 2
+    },
+    "special_effects": []
+  },
+  {
+    "name": "Plain Leggings of Training",
+    "slot": "legs",
+    "type": "armor",
+    "rarity": "COMMON",
+    "level": 1,
+    "stats": {
+      "strength": 2
+    },
+    "special_effects": []
+  },
+  {
+    "name": "Exceptional Armor of Mastery",
+    "slot": "body",
+    "type": "armor",
+    "rarity": "RARE",
+    "level": 1,
+    "stats": {
+      "strength": 17,
+      "hp": 9
+    },
+    "special_effects": []
+  },
+  {
+    "name": "Magnificent Aegis of the Conqueror",
+    "slot": "hands",
+    "type": "armor",
+    "rarity": "EPIC",
+    "level": 1,
+    "stats": {
+      "defense": 6,
+      "strength": 6
+    },
+    "special_effects": []
+  },
+  {
+    "name": "Exceptional Boots of Mastery",
+    "slot": "feet",
+    "type": "armor",
+    "rarity": "RARE",
+    "level": 1,
+    "stats": {
+      "defense": 22,
+      "strength": 17
+    },
+    "special_effects": []
+  },
+  {
+    "name": "Cosmic Sandals of Creation",
+    "slot": "feet",
+    "type": "armor",
+    "rarity": "MYTHIC",
+    "level": 1,
+    "stats": {
+      "hp": 23,
+      "attack": 34
+    },
+    "special_effects": []
+  },
+  {
+    "name": "Divine Greaves of the Cosmos",
+    "slot": "legs",
+    "type": "armor",
+    "rarity": "LEGENDARY",
+    "level": 1,
+    "stats": {
+      "defense": 35,
+      "hp": 44
+    },
+    "special_effects": []
+  },
+  {
+    "name": "Ordinary Staff of the Novice",
+    "slot": "weapon",
+    "type": "ranged_weapon",
+    "rarity": "COMMON",
+    "level": 1,
+    "stats": {
+      "strength": 2
+    },
+    "special_effects": []
+  }
+]
